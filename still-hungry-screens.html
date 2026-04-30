@@ -1628,7 +1628,7 @@
                 </div>
                 <div class="ch4-type" id="ch4Type">英雄</div>
                 <div class="ch4-cta">
-                  <button type="button" class="btn-pill" id="btnCh4Feed">喂养科加斯</button>
+                  <button type="button" class="btn-pill" id="btnCh4Feed">开始投喂</button>
                 </div>
               </div>
             </div>
@@ -1749,26 +1749,6 @@
       </nav>
     </div>
 
-    <!-- 03 CTA → Share link（PNG 03-1-1） -->
-    <div class="popup-layer" id="popupShareLink" hidden role="dialog" aria-modal="true" aria-labelledby="popupShareLinkTitle">
-      <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
-      <div class="popup-dialog modal-slide">
-        <div class="modal-head">
-          <h2 id="popupShareLinkTitle">Share link</h2>
-          <button type="button" class="modal-close popup-close" aria-label="Close">×</button>
-        </div>
-        <label class="field-label">Your Link</label>
-        <div class="field-box">wildrift.app/the-feast?invite=demo-signed-in&amp;src=card</div>
-        <label class="field-label">Share on social media</label>
-        <div class="social-row">
-          <button type="button" data-social="x">X</button>
-          <button type="button" data-social="instagram">Instagram</button>
-          <button type="button" data-social="facebook">Facebook</button>
-        </div>
-        <button type="button" class="btn-pill block" id="btnPopupCopyLink">Copy Link</button>
-      </div>
-    </div>
-
     <!-- Sign-in required -->
     <div class="popup-layer" id="popupNeedSignIn" hidden role="dialog" aria-modal="true" aria-labelledby="gateTitle">
       <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
@@ -1785,12 +1765,12 @@
       </div>
     </div>
 
-    <!-- 03 CTA → Share Card（PNG 03-1-2） -->
+    <!-- Share (card + link) -->
     <div class="popup-layer" id="popupShareCard" hidden role="dialog" aria-modal="true" aria-labelledby="popupShareCardTitle">
       <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
       <div class="popup-dialog modal-slide">
         <div class="modal-head">
-          <h2 id="popupShareCardTitle" style="font-family: var(--sans); font-weight: 700">Share Card</h2>
+          <h2 id="popupShareCardTitle" style="font-family: var(--sans); font-weight: 700">Share</h2>
           <button type="button" class="modal-close popup-close" aria-label="Close">×</button>
         </div>
         <div class="preview-box">
@@ -1798,12 +1778,15 @@
           <p class="big-serif">Thelma saved you a seat.</p>
           <p class="tiny">The table is set on Wild Rift. Tap the link. Cho'Gath has been waiting.</p>
         </div>
+        <label class="field-label">Your Link</label>
+        <div class="field-box">wildrift.app/the-feast?invite=demo-signed-in&amp;src=card</div>
         <label class="field-label">Share this on your social media</label>
         <div class="social-row">
           <button type="button" data-social="x">X</button>
           <button type="button" data-social="instagram">Instagram</button>
           <button type="button" data-social="facebook">Facebook</button>
         </div>
+        <button type="button" class="btn-pill block" id="btnPopupCopyLink">Copy Link</button>
       </div>
     </div>
 
@@ -1832,13 +1815,11 @@
           "05 Epilogue",
         ];
 
-        const popupShareLink = document.getElementById("popupShareLink");
         const popupShareCard = document.getElementById("popupShareCard");
         const popupNeedSignIn = document.getElementById("popupNeedSignIn");
         var isSignedIn = false;
 
         function closePopups() {
-          popupShareLink.hidden = true;
           popupShareCard.hidden = true;
           popupNeedSignIn.hidden = true;
           document.body.classList.remove("popup-open");
@@ -1869,7 +1850,7 @@
 
         document.getElementById("btnEpilogueInvite").addEventListener("click", function () {
           if (isSignedIn) {
-            openPopup(popupShareLink);
+            openPopup(popupShareCard);
           } else {
             openNeedSignInPopup();
           }
@@ -1888,7 +1869,7 @@
         var btnOpenShareLinkModal = document.getElementById("btnOpenShareLinkModal");
         if (btnOpenShareLinkModal) {
           btnOpenShareLinkModal.addEventListener("click", function () {
-            openPopup(popupShareLink);
+            openPopup(popupShareCard);
           });
         }
 
@@ -1933,9 +1914,8 @@
           });
           if (feedBtn) {
             feedBtn.addEventListener("click", function () {
-              // Pitch: feed leads to next screen.
-              if (index === 3) go(1);
-              else index = 4;
+              // Pitch: start feeding opens the share card dialog (card + link).
+              openPopup(popupShareCard);
             });
           }
           apply();
@@ -1954,7 +1934,7 @@
         });
 
         function getInviteUrl() {
-          var box = popupShareLink.querySelector(".field-box");
+          var box = popupShareCard.querySelector(".field-box");
           if (!box) return "";
           var raw = (box.textContent || "").trim();
           if (!raw) return "";
@@ -1982,7 +1962,6 @@
           }
         }
 
-        popupShareLink.querySelector(".social-row").addEventListener("click", handleSocialClick);
         popupShareCard.querySelector(".social-row").addEventListener("click", handleSocialClick);
 
         function releaseBusy() {
