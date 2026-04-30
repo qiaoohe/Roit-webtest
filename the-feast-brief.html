@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#120c0a" />
+    <title>The Feast · Still Hungry | Wild Rift</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f7efe4;
+        --ink: #1a1210;
+        --muted: #8a7a6e;
+        --gold: #c9a66b;
+        --gold-deep: #8b6239;
+        --rift-blue: #6b8cff;
+        --accent: #9c2f28;
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+        --radius: 20px;
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        font-family: Inter, system-ui, sans-serif;
+        color: var(--paper);
+        background: #080605;
+        overflow: hidden;
+      }
+
+      /* ========== Language toggle ========== */
+      .lang-switch {
+        position: fixed;
+        top: calc(12px + env(safe-area-inset-top, 0px));
+        right: calc(14px + env(safe-area-inset-right, 0px));
+        z-index: 110;
+        min-width: 52px;
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(247, 239, 228, 0.18);
+        background: rgba(8, 6, 5, 0.72);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        color: var(--paper);
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+      }
+
+      .lang-switch:active {
+        transform: scale(0.97);
+      }
+
+      /* ========== Book shell：滚动 = 翻页 ========== */
+      .book-viewport {
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-snap-type: y mandatory;
+        scroll-padding-top: 0;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .book-viewport::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .book-viewport::-webkit-scrollbar-thumb {
+        background: rgba(201, 166, 107, 0.35);
+        border-radius: 999px;
+      }
+
+      .page {
+        min-height: 100vh;
+        min-height: 100dvh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: clamp(20px, 5vw, 48px);
+        padding-bottom: calc(clamp(20px, 5vw, 48px) + var(--safe-bottom));
+        position: relative;
+      }
+
+      .page-inner {
+        width: min(100%, 560px);
+        margin: 0 auto;
+      }
+
+      /* ========== 进站：书打开 ========== */
+      .intro-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at 50% 40%, rgba(201, 166, 107, 0.15), transparent 45%),
+          linear-gradient(180deg, #0f0a08 0%, #060403 100%);
+        pointer-events: none;
+        animation: bookOpen 2.4s ease forwards;
+      }
+
+      .intro-overlay.is-done {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+      }
+
+      @keyframes bookOpen {
+        0% {
+          clip-path: inset(0 50% 0 50%);
+          filter: brightness(0.4);
+        }
+        55% {
+          clip-path: inset(0 8% 0 8%);
+          filter: brightness(1);
+        }
+        100% {
+          clip-path: inset(0 0 0 0);
+          filter: brightness(1);
+        }
+      }
+
+      .intro-card {
+        text-align: center;
+        padding: 28px 24px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(247, 239, 228, 0.15);
+        background: rgba(20, 14, 11, 0.85);
+        box-shadow: var(--shadow);
+        max-width: 320px;
+      }
+
+      .intro-card .logo-row {
+        font-family: "Cinzel", serif;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        font-size: 0.72rem;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .intro-card h1 {
+        margin: 0 0 8px;
+        font-family: "Cinzel", serif;
+        font-size: clamp(1.35rem, 4vw, 1.75rem);
+        line-height: 1.15;
+      }
+
+      .intro-card p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: rgba(247, 239, 228, 0.72);
+        line-height: 1.55;
+      }
+
+      /* ========== Typography ========== */
+      .eyebrow {
+        font-size: 0.68rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin: 0 0 10px;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-family: "Cinzel", serif;
+        font-size: clamp(1.45rem, 4.8vw, 2rem);
+        font-weight: 700;
+        line-height: 1.12;
+      }
+
+      .lede {
+        margin: 0 0 20px;
+        color: rgba(247, 239, 228, 0.78);
+        font-size: 0.95rem;
+        line-height: 1.65;
+      }
+
+      /* ========== Page backgrounds ========== */
+      .bg-cover {
+        background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(156, 47, 40, 0.35), transparent 50%),
+          linear-gradient(180deg, #16100d 0%, #0a0706 55%, #050403 100%);
+      }
+
+      .bg-memory {
+        background: linear-gradient(165deg, #14100e 0%, #1c1512 40%, #0c0908 100%);
+      }
+
+      .bg-feast {
+        background: radial-gradient(circle at 50% 100%, rgba(201, 166, 107, 0.12), transparent 42%),
+          linear-gradient(180deg, #120e0c 0%, #070504 100%);
+      }
+
+      .bg-share {
+        background: linear-gradient(185deg, #100d0b 0%, #181210 45%, #080605 100%);
+      }
+
+      .bg-board {
+        background: radial-gradient(circle at 80% 20%, rgba(107, 140, 255, 0.08), transparent 35%),
+          linear-gradient(180deg, #0d0a09 0%, #060504 100%);
+      }
+
+      .bg-film {
+        background: linear-gradient(180deg, #0a0807 0%, #15100e 55%, #060504 100%);
+      }
+
+      /* ========== Components ========== */
+      .panel {
+        border-radius: var(--radius);
+        border: 1px solid rgba(247, 239, 228, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 18px 16px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 0 20px;
+        border-radius: 999px;
+        border: none;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .btn-primary {
+        background: linear-gradient(180deg, #e4c995, var(--gold-deep));
+        color: var(--ink);
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+      }
+
+      .btn-ghost {
+        background: rgba(247, 239, 228, 0.06);
+        color: var(--paper);
+        border: 1px solid rgba(247, 239, 228, 0.18);
+      }
+
+      .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      /* Feast meter */
+      .cho-stage {
+        position: relative;
+        border-radius: var(--radius);
+        min-height: 200px;
+        background: radial-gradient(circle at 50% 120%, rgba(40, 28, 22, 0.9), #0f0c0b);
+        border: 1px solid rgba(247, 239, 228, 0.08);
+        overflow: hidden;
+        margin-bottom: 16px;
+      }
+
+      .table-line {
+        position: absolute;
+        left: 8%;
+        right: 8%;
+        bottom: 28%;
+        height: 12px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #5c3d28, #2a1a14);
+      }
+
+      .cho {
+        position: absolute;
+        left: 50%;
+        bottom: 22%;
+        width: min(160px, 42vw);
+        aspect-ratio: 1;
+        transform: translateX(-50%) scale(var(--cho-scale, 0.85));
+        transform-origin: bottom center;
+        transition: transform 0.35s ease;
+        border-radius: 50% 50% 42% 42%;
+        background: radial-gradient(circle at 40% 25%, rgba(255, 255, 255, 0.06), transparent 35%),
+          linear-gradient(180deg, #2f383f 0%, #121820 55%, #070b10 100%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .cho::after {
+        content: "";
+        position: absolute;
+        inset: 18% 28% auto;
+        height: 22%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(246, 213, 149, 0.85), transparent 62%);
+      }
+
+      label.slider-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 8px;
+      }
+
+      label.slider-label strong {
+        font-size: 1.35rem;
+        color: var(--paper);
+        letter-spacing: 0;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--gold);
+        margin-bottom: 10px;
+      }
+
+      .tier-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .tier {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(247, 239, 228, 0.08);
+        background: rgba(0, 0, 0, 0.22);
+        font-size: 0.82rem;
+        color: rgba(247, 239, 228, 0.82);
+      }
+
+      .tier[data-active="true"] {
+        border-color: rgba(201, 166, 107, 0.45);
+        background: rgba(201, 166, 107, 0.08);
+      }
+
+      .tier[data-locked="true"] {
+        opacity: 0.45;
+      }
+
+      .tier-tag {
+        font-weight: 800;
+        font-size: 0.72rem;
+        color: var(--gold);
+        white-space: nowrap;
+      }
+
+      /* Share / card */
+      .card-preview {
+        border-radius: 16px;
+        padding: 20px 18px;
+        min-height: 180px;
+        background: linear-gradient(180deg, #f4e8d4 0%, #dfc9a0 100%);
+        color: var(--ink);
+        border: 1px solid rgba(46, 26, 18, 0.15);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+      }
+
+      .card-preview small {
+        display: block;
+        font-size: 0.65rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        opacity: 0.65;
+        margin-bottom: 8px;
+      }
+
+      .card-preview h3 {
+        margin: 0 0 8px;
+        font-family: "Cinzel", serif;
+        font-size: 1.35rem;
+      }
+
+      .card-preview p {
+        margin: 0;
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+
+      .locked-blur {
+        filter: blur(5px);
+        pointer-events: none;
+        user-select: none;
+      }
+
+      /* Leaderboard */
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .tab {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(247, 239, 228, 0.14);
+        background: rgba(247, 239, 228, 0.05);
+        color: rgba(247, 239, 228, 0.65);
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .tab[aria-selected="true"] {
+        background: rgba(201, 166, 107, 0.18);
+        border-color: rgba(201, 166, 107, 0.35);
+        color: var(--paper);
+      }
+
+      table.lb {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+
+      table.lb th {
+        text-align: left;
+        font-size: 0.62rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gold);
+        padding: 8px 6px;
+        border-bottom: 1px solid rgba(247, 239, 228, 0.1);
+      }
+
+      table.lb td {
+        padding: 10px 6px;
+        border-bottom: 1px solid rgba(247, 239, 228, 0.06);
+      }
+
+      table.lb td:last-child {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Film */
+      .film-frame {
+        border-radius: var(--radius);
+        aspect-ratio: 16 / 9;
+        background: radial-gradient(circle at 50% 40%, rgba(201, 166, 107, 0.15), transparent 45%),
+          linear-gradient(145deg, #1f1714, #0b0908);
+        border: 1px solid rgba(247, 239, 228, 0.1);
+        display: grid;
+        place-items: center;
+        margin-bottom: 14px;
+      }
+
+      .play {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        border: 1px solid rgba(247, 239, 228, 0.25);
+        background: rgba(247, 239, 228, 0.06);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .play::before {
+        content: "";
+        margin-left: 4px;
+        border-style: solid;
+        border-width: 10px 0 10px 16px;
+        border-color: transparent transparent transparent rgba(247, 239, 228, 0.92);
+      }
+
+      /* Scroll hint */
+      .scroll-hint {
+        position: fixed;
+        bottom: calc(14px + var(--safe-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 50;
+        font-size: 0.62rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(247, 239, 228, 0.38);
+        pointer-events: none;
+        animation: pulseHint 2.4s ease-in-out infinite;
+      }
+
+      .scroll-hint.is-hidden {
+        opacity: 0;
+      }
+
+      @keyframes pulseHint {
+        0%,
+        100% {
+          opacity: 0.35;
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          opacity: 0.85;
+          transform: translateX(-50%) translateY(-4px);
+        }
+      }
+
+      .footnote {
+        margin-top: 14px;
+        font-size: 0.72rem;
+        color: rgba(247, 239, 228, 0.42);
+        line-height: 1.45;
+      }
+
+      @media (min-width: 768px) {
+        .page-inner {
+          width: min(100%, 640px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button type="button" class="lang-switch" id="langToggle" aria-label="Switch language">EN</button>
+
+    <div class="intro-overlay" id="introOverlay" aria-hidden="true">
+      <div class="intro-card">
+        <div class="logo-row" data-i18n="introLogo">Wild Rift · Campaign</div>
+        <h1 data-i18n="introTitle">The Feast</h1>
+        <p data-i18n-html="introSub">
+          向下滑动，翻阅这本活动故事书。<br /><span style="opacity: 0.78">滑动页面 · 翻开下一页</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="book-viewport" id="book">
+      <!-- Cover -->
+      <section class="page bg-cover" id="p-cover" aria-label="Cover">
+        <div class="page-inner">
+          <p class="eyebrow" data-i18n="coverEyebrow">Still Hungry</p>
+          <h2 data-i18n="coverH2">一本书，拆开整条回流宴席。</h2>
+          <p class="lede" data-i18n-html="coverLede">
+            Still Hungry 从来不只是一句口号——是没尽兴的那一局，和列表里好久没亮起来的那几个名字。<strong>往下轻轻翻页，筵席从你指尖续下去。</strong>
+          </p>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" data-jump="p-feast" data-i18n="coverBtnFeast">进入盛宴</button>
+            <button type="button" class="btn btn-ghost" data-jump="p-share" data-i18n="coverBtnCard">定制贺卡</button>
+          </div>
+          <p class="footnote" data-i18n="coverFoot">
+            活动细则与奖励内容以游戏内公告及各地区发行说明为准。
+          </p>
+        </div>
+      </section>
+
+      <!-- Chapter 1–2 narrative (compressed for web brief) -->
+      <section class="page bg-memory" id="p-memory" aria-label="Story">
+        <div class="page-inner">
+          <p class="eyebrow" data-i18n="memoryEyebrow">Storybook · Remember</p>
+          <h2 data-i18n="memoryH2">那些年屏幕前的夜晚。</h2>
+          <p class="lede" data-i18n-html="memoryLede">
+            第一章：显示器亮着的夜晚——蓝光映在脸上，键帽磨旧了边，五人开黑的笑声砸在键盘上。不比段位，只谈当时的悸动。<strong>这一页留给你们团队的回忆插画。</strong>
+          </p>
+          <div class="panel">
+            <p
+              style="margin: 0; font-size: 0.88rem; line-height: 1.65; color: rgba(247, 239, 228, 0.82)"
+              data-i18n="memoryPanel"
+            >
+              第二章：Cho'Gath 从召唤师峡谷苏醒，沿路吞咽 Still Hungry 的故事节拍——可与宣传片中段呼应；此处也可替换为横滑插画或静音短片条。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feast -->
+      <section class="page bg-feast" id="p-feast" aria-label="The Feast">
+        <div class="page-inner">
+          <p class="eyebrow" data-i18n="feastEyebrow">The Feast · Table</p>
+          <h2 data-i18n="feastH2">每位回流好友，都是一桌菜。</h2>
+          <p class="lede" data-i18n-html="feastLede">
+            每一位曾经离开的召唤师因你回归峡谷，宴席就向桌前推进一寸——Cho'Gath 与你一同壮大。<span style="opacity: 0.75">拖动滑块，预览你的宴席进度。</span>
+          </p>
+
+          <div class="cho-stage" aria-hidden="true">
+            <div class="table-line"></div>
+            <div class="cho" id="cho" style="--cho-scale: 0.82"></div>
+          </div>
+
+          <div class="panel">
+            <label class="slider-label" for="returns">
+              <span data-i18n="feastSliderSpan">已邀请回流好友</span>
+              <strong id="retCount">0</strong>
+            </label>
+            <input id="returns" type="range" min="0" max="20" value="0" />
+            <p style="margin: 0 0 8px; font-size: 0.82rem; color: rgba(247, 239, 228, 0.72)" id="nextTierHint">
+              邀请到 1 位回流好友时，可获得：双端登录礼包
+            </p>
+            <div class="tier-list" id="tiers"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Share / card -->
+      <section class="page bg-share" id="p-share" aria-label="Sharing">
+        <div class="page-inner">
+          <p class="eyebrow" data-i18n="shareEyebrow">Cho'Gath Card</p>
+          <h2 data-i18n="shareH2">寄一张贺卡给失联的好友。</h2>
+          <p class="lede" data-i18n="shareLede">
+            写下一句真心话，生成只属于你的邀请贺卡——把宴席从指尖分享到他们的对话框里。登录后即可复制专属回流链接。
+          </p>
+
+          <div id="cardWrap" class="locked-blur">
+            <div class="card-preview">
+              <small data-i18n="cardSmall">来自宴席的问候</small>
+              <h3 id="cardTitle" data-i18n="cardTitle">召唤师 —— 给你留了位子。</h3>
+              <p id="cardBody" data-i18n="cardBody">
+                峡谷已备好筵席，点开链接入座。Cho'Gath 仍在筵席尽头等候。
+              </p>
+            </div>
+          </div>
+
+          <div class="btn-row" style="margin-top: 14px">
+            <button type="button" class="btn btn-primary" id="btnLogin" data-i18n="btnLogin">
+              登录以解锁贺卡与邀请链接
+            </button>
+            <button type="button" class="btn btn-ghost" id="btnCopy" disabled data-i18n="btnCopy">复制邀请链接</button>
+          </div>
+          <p class="footnote" id="linkEcho" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- Leaderboard -->
+      <section class="page bg-board" id="p-board" aria-label="Leaderboard">
+        <div class="page-inner">
+          <p class="eyebrow" data-i18n="lbEyebrow">Leaderboard</p>
+          <h2 data-i18n="lbH2">谁带回的好友最多？</h2>
+          <p class="lede" data-i18n="lbLede">依据成功邀请回流的人数排行；可在全球榜与个人所在区域榜之间切换。</p>
+
+          <div class="tabs" role="tablist">
+            <button type="button" class="tab" role="tab" data-board="global" aria-selected="true" data-i18n="tabGlobal">
+              全球
+            </button>
+            <button type="button" class="tab" role="tab" data-board="regional" data-i18n="tabRegional">区域</button>
+          </div>
+
+          <div class="panel" style="padding: 0; overflow: hidden">
+            <table class="lb" id="lbTable">
+              <thead>
+                <tr>
+                  <th data-i18n="thRank">#</th>
+                  <th data-i18n="thPlayer">召唤师</th>
+                  <th data-i18n="thReturns">回流人数</th>
+                </tr>
+              </thead>
+              <tbody id="lbBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Film -->
+      <section class="page bg-film" id="p-film" aria-label="Film">
+        <div class="page-inner">
+          <p class="eyebrow" data-i18n="filmEyebrow">Film · Same book</p>
+          <h2 data-i18n="filmH2">宣传片与站点，同一本书。</h2>
+          <p class="lede" data-i18n="filmLede">
+            影像语言与网页美术一脉相承；完整宣传片请在下方播放，重温峡谷之上的宴席序幕。
+          </p>
+          <div class="film-frame">
+            <button type="button" class="play" id="btnPlayTeaser" data-i18n-aria="playAria"></button>
+          </div>
+          <p class="footnote" data-i18n="filmFoot">Still Hungry — The story continues.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="scroll-hint" id="scrollHint" data-i18n="scrollHint">滑动 · 翻页</div>
+
+    <script>
+      (function () {
+        var LANG_KEY = "the-feast-lang";
+
+        var I18N = {
+          zh: {
+            docTitle: "The Feast · Still Hungry | Wild Rift",
+            langToggleAria: "切换到英文",
+            introLogo: "Wild Rift · Campaign",
+            introTitle: "The Feast",
+            introSub:
+              "向下滑动，翻阅这本活动故事书。<br /><span style=\"opacity:0.78\">滑动页面 · 翻开下一页</span>",
+            coverEyebrow: "Still Hungry",
+            coverH2: "一本书，拆开整条回流宴席。",
+            coverLede:
+              "Still Hungry 从来不只是一句口号——是没尽兴的那一局，和列表里好久没亮起来的那几个名字。<strong>往下轻轻翻页，筵席从你指尖续下去。</strong>",
+            coverBtnFeast: "进入盛宴",
+            coverBtnCard: "定制贺卡",
+            coverFoot: "活动细则与奖励内容以游戏内公告及各地区发行说明为准。",
+            memoryEyebrow: "Storybook · Remember",
+            memoryH2: "那些年屏幕前的夜晚。",
+            memoryLede:
+              "第一章：显示器亮着的夜晚——蓝光映在脸上，键帽磨旧了边，五人开黑的笑声砸在键盘上。不比段位，只谈当时的悸动。<strong>这一页留给你们团队的回忆插画。</strong>",
+            memoryPanel:
+              "第二章：Cho'Gath 从召唤师峡谷苏醒，沿路吞咽 Still Hungry 的故事节拍——可与宣传片中段呼应；此处也可替换为横滑插画或静音短片条。",
+            feastEyebrow: "The Feast · Table",
+            feastH2: "每位回流好友，都是一桌菜。",
+            feastLede:
+              '每一位曾经离开的召唤师因你回归峡谷，宴席就向桌前推进一寸——Cho\'Gath 与你一同壮大。<span style="opacity: 0.75">拖动滑块，预览你的宴席进度。</span>',
+            feastSliderSpan: "已邀请回流好友",
+            tierMilestone: "本档奖励",
+            tierR1: "双端登录礼包",
+            tierR2: "经验加成与道具礼包",
+            tierR3: "Still Hungry 主题加载界面或表情",
+            tierR4: "珍稀战利品宝箱",
+            tierR5: "限定边框与召唤师图标",
+            feastHintCap: "本页所列档位奖励已全部达成；继续邀请好友仍可提升榜单名次。",
+            feastHintRewardTpl: "邀请到 {{count}} 位回流好友时，可获得：{{reward}}",
+            shareEyebrow: "Cho'Gath Card",
+            shareH2: "寄一张贺卡给失联的好友。",
+            shareLede:
+              "写下一句真心话，生成只属于你的邀请贺卡——把宴席从指尖分享到他们的对话框里。登录后即可复制专属回流链接。",
+            cardSmall: "来自宴席的问候",
+            cardTitle: "召唤师 —— 给你留了位子。",
+            cardBody:
+              "峡谷已备好筵席，点开链接入座。Cho'Gath 仍在筵席尽头等候。",
+            cardTitleAfterLogin: "Thelma —— 给你留了位子。",
+            btnLogin: "登录以解锁贺卡与邀请链接",
+            btnLoggedIn: "已登录",
+            btnCopy: "复制邀请链接",
+            demoLinkPrefix: "邀请链接：",
+            copiedPrefix: "已复制：",
+            lbEyebrow: "Leaderboard",
+            lbH2: "谁带回的好友最多？",
+            lbLede: "依据成功邀请回流的人数排行；可在全球榜与个人所在区域榜之间切换。",
+            tabGlobal: "全球",
+            tabRegional: "区域",
+            thRank: "#",
+            thPlayer: "召唤师",
+            thReturns: "回流人数",
+            filmEyebrow: "Film · Same book",
+            filmH2: "宣传片与站点，同一本书。",
+            filmLede:
+              "影像语言与网页美术一脉相承；完整宣传片请在下方播放，重温峡谷之上的宴席序幕。",
+            filmFoot: "Still Hungry — The story continues.",
+            playAria: "播放宣传片",
+            scrollHint: "滑动 · 翻页",
+          },
+          en: {
+            docTitle: "The Feast · Still Hungry | Wild Rift",
+            langToggleAria: "Switch to Chinese",
+            introLogo: "Wild Rift · Campaign",
+            introTitle: "The Feast",
+            introSub:
+              'Swipe down through the campaign storybook.<br /><span style="opacity:0.78">scroll · turn the page</span>',
+            coverEyebrow: "Still Hungry",
+            coverH2: "One book — the whole return banquet.",
+            coverLede:
+              "Still Hungry isn't a tagline — it's the match you didn't finish and the gray icons that stopped answering. <strong>Turn the page; the feast keeps going where your thumb lands.</strong>",
+            coverBtnFeast: "Enter the feast",
+            coverBtnCard: "Craft your card",
+            coverFoot:
+              "Rewards and rules follow in-game announcements and regional publisher notices.",
+            memoryEyebrow: "Storybook · Remember",
+            memoryH2: "Those nights in front of the screen.",
+            memoryLede:
+              "Chapter one: nights lit by monitors — glow on your face, worn keys, five-stack laughter rolling across the desk. Forget rank for a minute; remember how it felt. <strong>Leave room here for memory art.</strong>",
+            memoryPanel:
+              "Chapter two: the Terror of the Void wakes on Summoner's Rift and devours his way through Still Hungry — echoing the mid-film beat; swap in a swipe gallery or muted reel.",
+            feastEyebrow: "The Feast · Table",
+            feastH2: "Every returning friend is another dish.",
+            feastLede:
+              'Every Summoner who steps back onto the Rift because of you pulls the feast forward — Cho\'Gath grows with you. More returns, richer rewards. <span style="opacity: 0.75">Drag the slider to preview your spread.</span>',
+            feastSliderSpan: "Returning friends invited",
+            tierMilestone: "Tier reward",
+            tierR1: "Dual-login bundle",
+            tierR2: "XP boosts & items",
+            tierR3: "Still Hungry loading screen or emote",
+            tierR4: "Rare loot chest",
+            tierR5: "Exclusive border & summoner icon",
+            feastHintCap: "You've reached every reward tier on this page — keep inviting to climb the leaderboard.",
+            feastHintRewardTpl: "At {{count}} returning friends invited, you earn: {{reward}}",
+            shareEyebrow: "Cho'Gath Card",
+            shareH2: "Send a card to a friend you've lost touch with.",
+            shareLede:
+              "Write one honest line and generate a card worth sending — carry the feast from here to their chat. Sign in to copy your invite link.",
+            cardSmall: "A greeting from the feast",
+            cardTitle: "Summoner — saved you a seat.",
+            cardBody:
+              "The table is set on Wild Rift. Tap the link. Cho'Gath has been waiting.",
+            cardTitleAfterLogin: "Thelma — saved you a seat.",
+            btnLogin: "Sign in to unlock card & invite link",
+            btnLoggedIn: "Signed in",
+            btnCopy: "Copy invite link",
+            demoLinkPrefix: "Invite link: ",
+            copiedPrefix: "Copied: ",
+            lbEyebrow: "Leaderboard",
+            lbH2: "Who brought back the most friends?",
+            lbLede:
+              "Ranked by successful return invites — toggle Global or your regional board.",
+            tabGlobal: "Global",
+            tabRegional: "Regional",
+            thRank: "#",
+            thPlayer: "Summoner",
+            thReturns: "Returns",
+            filmEyebrow: "Film · Same book",
+            filmH2: "The trailer and site share one spine.",
+            filmLede:
+              "Motion and UI speak the same visual language — watch the full film below and reopen the feast above the Rift.",
+            filmFoot: "Still Hungry — The story continues.",
+            playAria: "Play trailer",
+            scrollHint: "Scroll · turn the page",
+          },
+        };
+
+        var currentLang =
+          typeof localStorage !== "undefined" && localStorage.getItem(LANG_KEY) === "en"
+            ? "en"
+            : "zh";
+
+        function t(key) {
+          var bag = I18N[currentLang];
+          return bag && bag[key] != null ? bag[key] : key;
+        }
+
+        var loggedIn = false;
+        var linkEchoState = "idle";
+
+        function fakeLink() {
+          return (
+            "wildrift.app/the-feast?invite=demo-" + (loggedIn ? "signed-in" : "guest") + "&src=card"
+          );
+        }
+
+        var overlay = document.getElementById("introOverlay");
+        window.setTimeout(function () {
+          if (overlay) overlay.classList.add("is-done");
+        }, 2400);
+
+        var book = document.getElementById("book");
+        var hint = document.getElementById("scrollHint");
+        book.addEventListener(
+          "scroll",
+          function () {
+            if (book.scrollTop > 40 && hint) hint.classList.add("is-hidden");
+          },
+          { passive: true }
+        );
+
+        document.querySelectorAll("[data-jump]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var id = btn.getAttribute("data-jump");
+            var el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        /* Feast reward tiers */
+        var TIERS = [
+          { min: 1, label: "1+", rewardKey: "tierR1" },
+          { min: 3, label: "3+", rewardKey: "tierR2" },
+          { min: 5, label: "5+", rewardKey: "tierR3" },
+          { min: 7, label: "7+", rewardKey: "tierR4" },
+          { min: 10, label: "10+", rewardKey: "tierR5" },
+        ];
+
+        var returnsEl = document.getElementById("returns");
+        var retCountEl = document.getElementById("retCount");
+        var choEl = document.getElementById("cho");
+        var tiersEl = document.getElementById("tiers");
+        var hintEl = document.getElementById("nextTierHint");
+
+        function nextTierDef(n) {
+          for (var i = 0; i < TIERS.length; i++) {
+            if (n < TIERS[i].min) return TIERS[i];
+          }
+          return null;
+        }
+
+        function renderTiers(n) {
+          tiersEl.innerHTML = "";
+          TIERS.forEach(function (tier) {
+            var row = document.createElement("div");
+            row.className = "tier";
+            row.dataset.locked = n < tier.min ? "true" : "false";
+            var unlocked = TIERS.filter(function (x) {
+              return n >= x.min;
+            });
+            var highest = unlocked.length ? unlocked[unlocked.length - 1].min : 0;
+            row.dataset.active = n >= tier.min && tier.min === highest ? "true" : "false";
+            row.innerHTML =
+              '<span class="tier-tag">' +
+              tier.label +
+              '</span><div><strong style="display:block;margin-bottom:4px;font-size:0.85rem">' +
+              t("tierMilestone") +
+              "</strong>" +
+              t(tier.rewardKey) +
+              "</div>";
+            tiersEl.appendChild(row);
+          });
+          var nextDef = nextTierDef(n);
+          if (!nextDef) hintEl.textContent = t("feastHintCap");
+          else {
+            var rewardName = t(nextDef.rewardKey);
+            hintEl.textContent = t("feastHintRewardTpl")
+              .replace("{{count}}", String(nextDef.min))
+              .replace("{{reward}}", rewardName);
+          }
+        }
+
+        function syncFeast(n) {
+          retCountEl.textContent = String(n);
+          var s = 0.72 + Math.min(n, 20) * 0.028;
+          choEl.style.setProperty("--cho-scale", s.toFixed(3));
+          renderTiers(n);
+        }
+
+        returnsEl.addEventListener("input", function () {
+          syncFeast(Number(returnsEl.value));
+        });
+
+        function refreshLoginLabel() {
+          var el = document.getElementById("btnLogin");
+          if (!el) return;
+          el.textContent = loggedIn ? t("btnLoggedIn") : t("btnLogin");
+        }
+
+        function refreshLinkEcho() {
+          var echo = document.getElementById("linkEcho");
+          if (!echo) return;
+          if (linkEchoState === "demo") echo.textContent = t("demoLinkPrefix") + fakeLink();
+          else if (linkEchoState === "copied") echo.textContent = t("copiedPrefix") + fakeLink();
+        }
+
+        function applyLanguage(lang) {
+          currentLang = lang === "en" ? "en" : "zh";
+          try {
+            localStorage.setItem(LANG_KEY, currentLang);
+          } catch (e) {}
+
+          document.documentElement.lang = currentLang === "zh" ? "zh-CN" : "en";
+          document.title = t("docTitle");
+
+          var toggle = document.getElementById("langToggle");
+          if (toggle) {
+            toggle.textContent = currentLang === "zh" ? "EN" : "中文";
+            toggle.setAttribute("aria-label", t("langToggleAria"));
+          }
+
+          document.querySelectorAll("[data-i18n]").forEach(function (el) {
+            var key = el.getAttribute("data-i18n");
+            if (!key || I18N[currentLang][key] == null) return;
+            if (el.id === "btnLogin" && loggedIn) return;
+            el.textContent = I18N[currentLang][key];
+          });
+
+          document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+            var key = el.getAttribute("data-i18n-html");
+            if (key && I18N[currentLang][key] != null) el.innerHTML = I18N[currentLang][key];
+          });
+
+          document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
+            var key = el.getAttribute("data-i18n-aria");
+            if (key && I18N[currentLang][key] != null)
+              el.setAttribute("aria-label", I18N[currentLang][key]);
+          });
+
+          if (loggedIn) {
+            var ct = document.getElementById("cardTitle");
+            if (ct) ct.textContent = t("cardTitleAfterLogin");
+          }
+
+          refreshLoginLabel();
+          refreshLinkEcho();
+          syncFeast(Number(returnsEl.value));
+        }
+
+        applyLanguage(currentLang);
+
+        /* Login + link demo */
+        var btnLogin = document.getElementById("btnLogin");
+        var btnCopy = document.getElementById("btnCopy");
+        var cardWrap = document.getElementById("cardWrap");
+        var linkEcho = document.getElementById("linkEcho");
+
+        btnLogin.addEventListener("click", function () {
+          loggedIn = true;
+          cardWrap.classList.remove("locked-blur");
+          btnCopy.disabled = false;
+          refreshLoginLabel();
+          document.getElementById("cardTitle").textContent = t("cardTitleAfterLogin");
+          linkEchoState = "demo";
+          refreshLinkEcho();
+        });
+
+        btnCopy.addEventListener("click", function () {
+          if (!loggedIn) return;
+          var url = fakeLink();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(
+              function () {
+                linkEchoState = "copied";
+                refreshLinkEcho();
+              },
+              function () {
+                if (linkEcho) linkEcho.textContent = url;
+              }
+            );
+          } else {
+            if (linkEcho) linkEcho.textContent = url;
+          }
+        });
+
+        var langToggle = document.getElementById("langToggle");
+        if (langToggle) {
+          langToggle.addEventListener("click", function () {
+            applyLanguage(currentLang === "zh" ? "en" : "zh");
+          });
+        }
+
+        /* Leaderboard mock — brief: regional vs global */
+        var DATA = {
+          global: [
+            ["1", "PebbleKing", "118"],
+            ["2", "Thelma", "104"],
+            ["3", "OpenSeat", "97"],
+            ["4", "QiaoHE", "83"],
+          ],
+          regional: [
+            ["12", "Thelma", "12"],
+            ["13", "RiceRift", "11"],
+            ["14", "NightQ", "10"],
+            ["15", "OpenSeat", "9"],
+          ],
+        };
+
+        var board = "global";
+        var lbBody = document.getElementById("lbBody");
+
+        function renderLb() {
+          lbBody.innerHTML = "";
+          DATA[board].forEach(function (row) {
+            var tr = document.createElement("tr");
+            tr.innerHTML = "<td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[2] + "</td>";
+            lbBody.appendChild(tr);
+          });
+        }
+
+        document.querySelectorAll(".tab").forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            board = tab.getAttribute("data-board");
+            document.querySelectorAll(".tab").forEach(function (t) {
+              t.setAttribute("aria-selected", t === tab ? "true" : "false");
+            });
+            renderLb();
+          });
+        });
+        renderLb();
+      })();
+    </script>
+  </body>
+</html>

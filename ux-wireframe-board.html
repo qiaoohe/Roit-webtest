@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Still Hungry · UX 结构板（黑白线框）</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0a0a0a;
+        --paper: #fafafa;
+        --line: #1a1a1a;
+        --muted: #6b6b6b;
+        --faint: #e8e8e8;
+        --focus: #000;
+        --font: "IBM Plex Sans", system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font);
+        background: var(--paper);
+        color: var(--ink);
+        line-height: 1.45;
+        font-size: 15px;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .board {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+      }
+
+      .board-header {
+        border: 2px solid var(--line);
+        padding: 20px 24px;
+        margin-bottom: 28px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .board-header h1 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .board-header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        max-width: 520px;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        border: 1px solid var(--line);
+        padding: 4px 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      section.wf {
+        border: 2px solid var(--line);
+        margin-bottom: 24px;
+        background: #fff;
+      }
+
+      .wf-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 18px;
+        border-bottom: 2px solid var(--line);
+        background: var(--faint);
+      }
+
+      .wf-head h2 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .wf-head span.note {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .wf-body {
+        padding: 18px;
+      }
+
+      /* Tier matrix */
+      .matrix-wrap {
+        overflow-x: auto;
+      }
+
+      table.tier-matrix {
+        width: 100%;
+        min-width: 640px;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+
+      table.tier-matrix th,
+      table.tier-matrix td {
+        border: 1px solid var(--line);
+        padding: 12px 14px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      table.tier-matrix th {
+        background: var(--ink);
+        color: var(--paper);
+        font-weight: 600;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      table.tier-matrix tbody tr {
+        transition: background 0.15s ease;
+      }
+
+      table.tier-matrix tbody tr[data-tier].is-active {
+        background: #ececec;
+        outline: 2px solid var(--ink);
+        outline-offset: -2px;
+      }
+
+      table.tier-matrix tbody tr:hover {
+        background: #f3f3f3;
+      }
+
+      /* Reason grid */
+      .reason-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 0;
+        border: 1px solid var(--line);
+      }
+
+      @media (max-width: 720px) {
+        .reason-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .reason-grid > div {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        border-right: 1px solid var(--line);
+      }
+
+      .reason-grid > div:nth-child(2n) {
+        border-right: none;
+      }
+
+      .reason-grid .label {
+        font-weight: 700;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: var(--faint);
+      }
+
+      .reason-grid .text {
+        color: #333;
+        font-size: 0.88rem;
+      }
+
+      /* Hero wire */
+      .hero-wf {
+        border: 2px dashed var(--line);
+        padding: 32px 24px;
+        text-align: center;
+      }
+
+      .hero-wf .kicker {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .hero-wf h3 {
+        margin: 0 0 12px;
+        font-size: clamp(1.5rem, 4vw, 2.1rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .hero-wf .sub {
+        max-width: 520px;
+        margin: 0 auto;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .hero-actions {
+        margin-top: 22px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      /* Chapters */
+      .chapter-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+        border-bottom: 2px solid var(--line);
+        margin: -6px -6px 18px;
+      }
+
+      .chapter-tabs button {
+        flex: 1;
+        min-width: 120px;
+        padding: 12px 14px;
+        border: none;
+        border-right: 1px solid var(--line);
+        background: #fff;
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 0.82rem;
+        cursor: pointer;
+        color: var(--muted);
+        transition: color 0.15s, background 0.15s;
+      }
+
+      .chapter-tabs button:last-child {
+        border-right: none;
+      }
+
+      .chapter-tabs button:hover {
+        background: var(--faint);
+        color: var(--ink);
+      }
+
+      .chapter-tabs button.is-active {
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .chapter-panel {
+        display: none;
+        padding: 8px 4px 4px;
+        min-height: 120px;
+        border: 1px dashed #bbb;
+        padding: 16px;
+        font-size: 0.88rem;
+        color: #333;
+      }
+
+      .chapter-panel.is-visible {
+        display: block;
+      }
+
+      /* Feast block */
+      .feast-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      @media (max-width: 820px) {
+        .feast-split {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel-outline {
+        border: 2px solid var(--line);
+        padding: 16px;
+      }
+
+      .panel-outline h4 {
+        margin: 0 0 8px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .panel-outline p.lead {
+        margin: 0 0 16px;
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+
+      .slider-row {
+        margin-bottom: 8px;
+      }
+
+      .slider-row label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .slider-row input[type="range"] {
+        width: 100%;
+        accent-color: var(--ink);
+        height: 6px;
+      }
+
+      .milestone-dots {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-top: 6px;
+        user-select: none;
+      }
+
+      .reward-line {
+        margin-top: 14px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        font-size: 0.85rem;
+      }
+
+      .reward-line strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      /* Login toggle UX */
+      .auth-switch {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+
+      .auth-switch label {
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .toggle {
+        position: relative;
+        width: 48px;
+        height: 26px;
+        border: 2px solid var(--line);
+        background: #fff;
+        cursor: pointer;
+        padding: 0;
+        border-radius: 0;
+      }
+
+      .toggle::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 16px;
+        height: 16px;
+        background: var(--ink);
+        transition: transform 0.18s ease;
+      }
+
+      .toggle[aria-checked="true"]::after {
+        transform: translateX(20px);
+      }
+
+      .cta-zone {
+        border: 2px dashed var(--muted);
+        padding: 14px;
+        font-size: 0.85rem;
+      }
+
+      .cta-zone.is-hidden {
+        display: none;
+      }
+
+      .btn-wf {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 18px;
+        border: 2px solid var(--line);
+        background: var(--ink);
+        color: var(--paper);
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 0.82rem;
+        cursor: pointer;
+        margin-top: 10px;
+        margin-right: 8px;
+      }
+
+      .btn-wf.secondary {
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      .btn-wf:hover {
+        opacity: 0.88;
+      }
+
+      .btn-wf:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 3px;
+      }
+
+      /* Card stub */
+      .card-stub {
+        aspect-ratio: 4 / 5;
+        max-width: 220px;
+        border: 2px solid var(--line);
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        color: var(--muted);
+        text-align: center;
+        padding: 12px;
+      }
+
+      /* Leaderboard */
+      .lb-toolbar {
+        display: flex;
+        gap: 0;
+        margin-bottom: 14px;
+        border: 1px solid var(--line);
+      }
+
+      .lb-toolbar button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-right: 1px solid var(--line);
+        background: #fff;
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 0.78rem;
+        cursor: pointer;
+      }
+
+      .lb-toolbar button:last-child {
+        border-right: none;
+      }
+
+      .lb-toolbar button.is-active {
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .lb-personal {
+        border: 1px solid var(--line);
+        padding: 14px;
+        margin-bottom: 14px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        text-align: center;
+        font-size: 0.82rem;
+      }
+
+      .lb-personal .big {
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+
+      table.lb-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+
+      table.lb-table th,
+      table.lb-table td {
+        border: 1px solid var(--line);
+        padding: 8px 10px;
+        text-align: left;
+      }
+
+      table.lb-table th {
+        background: var(--faint);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .epilogue-wf {
+        text-align: center;
+        padding: 28px 20px;
+      }
+
+      .epilogue-wf h3 {
+        margin: 0 0 12px;
+        font-size: 1.15rem;
+      }
+
+      .epilogue-wf p {
+        margin: 0 auto 20px;
+        max-width: 560px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .ux-anno {
+        margin-top: 28px;
+        padding: 14px;
+        border: 1px dashed var(--muted);
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .toast-sim {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(120%);
+        background: var(--ink);
+        color: var(--paper);
+        padding: 12px 20px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        border: 2px solid var(--line);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+        z-index: 50;
+        max-width: min(90vw, 400px);
+        text-align: center;
+      }
+
+      .toast-sim.is-on {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board" id="top">
+      <header class="board-header">
+        <div>
+          <h1>Still Hungry · Web UX 结构板</h1>
+          <p>
+            黑白线框版，对应邀请人数阶梯、宴席预览、登录态 CTA、排行榜与尾声行动点。用于评审信息架构与交互状态，非最终视觉。
+          </p>
+        </div>
+        <div class="tag-row" aria-hidden="true">
+          <span class="tag">Wireframe</span>
+          <span class="tag">IA</span>
+          <span class="tag">States</span>
+        </div>
+      </header>
+
+      <!-- A: Tier matrix from PDF -->
+      <section class="wf" aria-labelledby="sec-tiers">
+        <div class="wf-head">
+          <h2 id="sec-tiers">阶梯 · Invited Friends × Tier Reward × Progress</h2>
+          <span class="note">拖动下方滑块时，本表对应行高亮</span>
+        </div>
+        <div class="wf-body matrix-wrap">
+          <table class="tier-matrix" id="tierMatrix">
+            <thead>
+              <tr>
+                <th scope="col">Invited Friends</th>
+                <th scope="col">Tier Reward</th>
+                <th scope="col">Progress Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-tier="1" data-invite-max="1">
+                <td>1 Person</td>
+                <td>Cross-platform Login Pack</td>
+                <td>Achieve this tier</td>
+              </tr>
+              <tr data-tier="3" data-invite-max="3">
+                <td>3 People</td>
+                <td>XP Boost &amp; Item Pack</td>
+                <td>Achieve this tier</td>
+              </tr>
+              <tr data-tier="5" data-invite-max="5">
+                <td>5 People</td>
+                <td>Still Hungry Loading Screen or Emote</td>
+                <td>Achieve this tier</td>
+              </tr>
+              <tr data-tier="7" data-invite-max="7">
+                <td>7 People</td>
+                <td>Rare Loot Chest</td>
+                <td>Achieve this tier</td>
+              </tr>
+              <tr data-tier="10" data-invite-max="10">
+                <td>10 People</td>
+                <td>Limited Border &amp; Summoner Icon</td>
+                <td>Achieve this tier</td>
+              </tr>
+              <tr data-tier="11" data-invite-max="999">
+                <td>&gt;10 People</td>
+                <td>Leaderboard climb</td>
+                <td>All tier rewards achieved, can continue to climb the leaderboard</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- B: Reason / Explanation -->
+      <section class="wf" aria-labelledby="sec-reason">
+        <div class="wf-head">
+          <h2 id="sec-reason">系统理由 · Reason / Explanation</h2>
+          <span class="note">与 PDF 中 Identify / Attribute 等一致</span>
+        </div>
+        <div class="wf-body">
+          <div class="reason-grid">
+            <div class="label">Identify Inviter</div>
+            <div class="text">System needs to know who sent the invitation to attribute links and issue rewards.</div>
+            <div class="label">Attribute Return</div>
+            <div class="text">Links inviter account, invitation link, invited friend, and return behavior.</div>
+            <div class="label">Issue Rewards</div>
+            <div class="text">Confirms reward ownership, prevents repeated invites, ensures rewards go to correct accounts.</div>
+            <div class="label">Prevent Cheating</div>
+            <div class="text">Acts as a basic threshold to limit anonymous abuse, fake returns, and repeated rewards.</div>
+            <div class="label">Synchronize Progress</div>
+            <div class="text">Binds personal progress (invites, rewards, leaderboard) to a real account.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- C: Hero -->
+      <section class="wf" aria-labelledby="sec-hero">
+        <div class="wf-head">
+          <h2 id="sec-hero">首屏 · Still Hungry</h2>
+          <span class="note">Tagline + 主 CTA</span>
+        </div>
+        <div class="wf-body">
+          <div class="hero-wf">
+            <p class="kicker">Campaign Hero</p>
+            <h3>Still Hungry — the whole return banquet.</h3>
+            <p class="sub">
+              Still Hungry isn't a tagline — it's the match you didn't finish and the gray icons that stopped answering.
+            </p>
+            <div class="hero-actions">
+              <button type="button" class="btn-wf" id="heroScrollFeast">Enter the feast</button>
+              <a href="#sec-feast" class="btn-wf secondary">Rewards &amp; rules（锚点）</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- D: Storybook chapters -->
+      <section class="wf" aria-labelledby="sec-story">
+        <div class="wf-head">
+          <h2 id="sec-story">Storybook · Remember</h2>
+          <span class="note">Those nights in front of the screen — 多章叙事占位</span>
+        </div>
+        <div class="wf-body">
+          <div class="chapter-tabs" role="tablist" aria-label="章节切换">
+            <button type="button" role="tab" aria-selected="true" aria-controls="ch1" id="tab1" class="is-active">Chapter 1</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="ch2" id="tab2">Chapter 2</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="ch3" id="tab3">Chapter 3</button>
+          </div>
+          <div id="ch1" role="tabpanel" aria-labelledby="tab1" class="chapter-panel is-visible">
+            Nights lit by monitors — glow on your face, worn keys, five-stack laughter. Leave room here for memory art.
+          </div>
+          <div id="ch2" role="tabpanel" aria-labelledby="tab2" class="chapter-panel" hidden>
+            Chapter 2 占位：情绪递进 / 与宴席动机衔接。
+          </div>
+          <div id="ch3" role="tabpanel" aria-labelledby="tab3" class="chapter-panel" hidden>
+            Chapter 3 占位：过渡到 The Feast · Table 与滑块预览。
+          </div>
+        </div>
+      </section>
+
+      <!-- E: Feast + slider + auth states -->
+      <section class="wf" id="sec-feast" aria-labelledby="sec-feast-title">
+        <div class="wf-head">
+          <h2 id="sec-feast-title">The Feast · Table</h2>
+          <span class="note">滑块预览档位 + 登录前后 CTA 变化</span>
+        </div>
+        <div class="wf-body">
+          <div class="feast-split">
+            <div class="panel-outline">
+              <h4>Every returning friend is another dish</h4>
+              <p class="lead">
+                More returns, richer rewards. Drag the slider to preview your spread（与阶梯表联动）。
+              </p>
+              <div class="slider-row">
+                <label for="inviteSlider">
+                  <span>Returning friends</span>
+                  <strong id="inviteValue">1</strong>
+                </label>
+                <input id="inviteSlider" type="range" min="0" max="12" value="1" step="1" aria-valuemin="0" aria-valuemax="12" />
+                <div class="milestone-dots" aria-hidden="true">
+                  <span>0</span><span>1</span><span>3</span><span>5</span><span>7</span><span>10</span><span>12+</span>
+                </div>
+              </div>
+              <div class="reward-line" id="rewardPreview">
+                <strong>当前预览解锁</strong>
+                <span id="rewardPreviewText">At 1 returning friends: Cross-platform Login Pack</span>
+              </div>
+
+              <div class="auth-switch">
+                <span id="authLabel">登录状态（UX 示意）</span>
+                <button type="button" class="toggle" id="authToggle" role="switch" aria-checked="false" aria-labelledby="authLabel"></button>
+                <span id="authStateText">未登录</span>
+              </div>
+
+              <div class="cta-zone" id="ctaGuest">
+                <strong>未登录</strong><br />
+                Sign in to copy your invite link. · Sign in to unlock card &amp; invite link
+                <div>
+                  <button type="button" class="btn-wf" id="mockLogin">模拟登录</button>
+                </div>
+              </div>
+              <div class="cta-zone is-hidden" id="ctaUser">
+                <strong>已登录</strong><br />
+                Your Link · Copy Link · Download Card · Share Link（X / Instagram / Facebook）
+                <div>
+                  <button type="button" class="btn-wf" id="copyDemo">Copy Link</button>
+                  <button type="button" class="btn-wf secondary" id="downloadDemo">Download Card</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-outline">
+              <h4>Cho'Gath Card · 子模块</h4>
+              <p class="lead">Send a card to a friend you've lost touch with. One honest line → generate card.</p>
+              <div class="card-stub" aria-hidden="true">Card preview<br />640×800 占位</div>
+              <p style="margin-top: 12px; font-size: 0.78rem; color: var(--muted);">
+                点击「下载卡片」可接 PDF 中「下载卡片后提示对话框」流程（下方 Toast 模拟）。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- F: Leaderboard -->
+      <section class="wf" aria-labelledby="sec-lb">
+        <div class="wf-head">
+          <h2 id="sec-lb">Leaderboard</h2>
+          <span class="note">Personal / Global vs Regional</span>
+        </div>
+        <div class="wf-body">
+          <div class="lb-personal">
+            <div>
+              <div class="big" id="lbReturns">12</div>
+              <div>Returns</div>
+            </div>
+            <div>
+              <div class="big" id="lbRank">#184</div>
+              <div>Rank</div>
+            </div>
+            <div>
+              <div class="big" id="lbTier">—</div>
+              <div>Feast tier</div>
+            </div>
+          </div>
+          <div class="lb-toolbar" role="tablist" aria-label="排行榜范围">
+            <button type="button" class="is-active" data-board="global" id="lbGlobal">Global Top 10</button>
+            <button type="button" data-board="regional" id="lbRegional">Regional</button>
+          </div>
+          <div id="lbPanelGlobal">
+            <table class="lb-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Returns</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>#1</td><td>PebbleKing</td><td>118</td></tr>
+                <tr><td>#2</td><td>…</td><td>…</td></tr>
+                <tr><td>#3</td><td>…</td><td>…</td></tr>
+              </tbody>
+            </table>
+            <p style="margin-top: 10px; font-size: 0.78rem; color: var(--muted);">Real-time top feeders worldwide（示意数据）。</p>
+          </div>
+          <div id="lbPanelRegional" hidden>
+            <table class="lb-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Returns</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>#1</td><td>RegionalA</td><td>42</td></tr>
+                <tr><td>#2</td><td>RegionalB</td><td>38</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- G: Epilogue CTA -->
+      <section class="wf" aria-labelledby="sec-epi">
+        <div class="wf-head">
+          <h2 id="sec-epi">尾声 · Still Hungry</h2>
+          <span class="note">情感收束 + Invite Now</span>
+        </div>
+        <div class="wf-body">
+          <div class="epilogue-wf">
+            <h3>You can turn the last page — the story doesn't have to end.</h3>
+            <p>
+              The return feast was never about who invites the most — it's about pulling scattered names back into voice chat,
+              back into laughter, back into “one more.”
+            </p>
+            <button type="button" class="btn-wf" id="inviteNow">Invite Now</button>
+          </div>
+          <p class="ux-anno">
+            法律与规则：Rewards and rules follow in-game announcements and regional publisher notices. · Web Share API Level 2
+            等能力可在高保真稿中标注设备覆盖。
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast-sim" id="toastSim" role="status">已复制示意链接（原型）</div>
+
+    <script>
+      (function () {
+        const TIER_REWARDS = [
+          { max: 0, text: "尚未达成邀请阶梯（示意）" },
+          { max: 1, text: "At 1 returning friends: Cross-platform Login Pack" },
+          { max: 3, text: "At 3: XP Boost & Item Pack" },
+          { max: 5, text: "At 5: Still Hungry loading screen or emote" },
+          { max: 7, text: "At 7: Rare loot chest" },
+          { max: 10, text: "At 10: Limited border & summoner icon" },
+          { max: 999, text: "Beyond 10: leaderboard climb · all page tiers cleared" },
+        ];
+
+        /** 当前邀请数所在阶梯行（与 PDF 1/3/5/7/10/>10 一致） */
+        function tierForCount(n) {
+          if (n <= 0) return 0;
+          if (n < 3) return 1;
+          if (n < 5) return 3;
+          if (n < 7) return 5;
+          if (n < 10) return 7;
+          if (n < 11) return 10;
+          return 11;
+        }
+
+        function rewardText(n) {
+          const t = tierForCount(n);
+          if (t === 0) return TIER_REWARDS[0].text;
+          if (t === 1) return TIER_REWARDS[1].text;
+          if (t === 3) return TIER_REWARDS[2].text;
+          if (t === 5) return TIER_REWARDS[3].text;
+          if (t === 7) return TIER_REWARDS[4].text;
+          if (t === 10) return TIER_REWARDS[5].text;
+          return TIER_REWARDS[6].text;
+        }
+
+        const slider = document.getElementById("inviteSlider");
+        const inviteValue = document.getElementById("inviteValue");
+        const rewardPreviewText = document.getElementById("rewardPreviewText");
+        const rows = document.querySelectorAll("#tierMatrix tbody tr[data-tier]");
+
+        function highlightTierRows(count) {
+          const active = tierForCount(count);
+          rows.forEach((row) => {
+            const tier = parseInt(row.dataset.tier, 10);
+            row.classList.toggle("is-active", tier === active);
+          });
+        }
+
+        function onSliderInput() {
+          const v = Number(slider.value, 10);
+          inviteValue.textContent = v >= 12 ? "12+" : String(v);
+          rewardPreviewText.textContent = rewardText(v);
+          highlightTierRows(v);
+          document.getElementById("lbReturns").textContent = String(Math.max(v, 1) * 2);
+          document.getElementById("lbRank").textContent = "#" + (200 - v * 3);
+        }
+
+        slider.addEventListener("input", onSliderInput);
+        onSliderInput();
+
+        const authToggle = document.getElementById("authToggle");
+        const ctaGuest = document.getElementById("ctaGuest");
+        const ctaUser = document.getElementById("ctaUser");
+        const authStateText = document.getElementById("authStateText");
+
+        function setLoggedIn(on) {
+          authToggle.setAttribute("aria-checked", on ? "true" : "false");
+          ctaGuest.classList.toggle("is-hidden", on);
+          ctaUser.classList.toggle("is-hidden", !on);
+          authStateText.textContent = on ? "已登录" : "未登录";
+        }
+
+        authToggle.addEventListener("click", () => {
+          const on = authToggle.getAttribute("aria-checked") !== "true";
+          setLoggedIn(on);
+        });
+
+        document.getElementById("mockLogin").addEventListener("click", () => setLoggedIn(true));
+
+        const toast = document.getElementById("toastSim");
+        function showToast(msg) {
+          toast.textContent = msg;
+          toast.classList.add("is-on");
+          clearTimeout(showToast._t);
+          showToast._t = setTimeout(() => toast.classList.remove("is-on"), 2200);
+        }
+
+        document.getElementById("copyDemo").addEventListener("click", () => showToast("已复制示意链接（原型）"));
+        document.getElementById("downloadDemo").addEventListener("click", () =>
+          showToast("下载完成 → 可弹出对话框：分享至 X / Instagram / Facebook（PDF 注）")
+        );
+
+        document.getElementById("heroScrollFeast").addEventListener("click", () => {
+          document.getElementById("sec-feast").scrollIntoView({ behavior: "smooth" });
+        });
+
+        document.getElementById("inviteNow").addEventListener("click", () => {
+          document.getElementById("top").scrollIntoView({ behavior: "smooth" });
+        });
+
+        const tabs = document.querySelectorAll(".chapter-tabs button");
+        const panels = [document.getElementById("ch1"), document.getElementById("ch2"), document.getElementById("ch3")];
+        tabs.forEach((tab, i) => {
+          tab.addEventListener("click", () => {
+            tabs.forEach((t) => {
+              t.classList.remove("is-active");
+              t.setAttribute("aria-selected", "false");
+            });
+            tab.classList.add("is-active");
+            tab.setAttribute("aria-selected", "true");
+            panels.forEach((p, j) => {
+              const on = j === i;
+              p.classList.toggle("is-visible", on);
+              p.hidden = !on;
+            });
+          });
+        });
+
+        const lbGlobal = document.getElementById("lbGlobal");
+        const lbRegional = document.getElementById("lbRegional");
+        const lbPanelGlobal = document.getElementById("lbPanelGlobal");
+        const lbPanelRegional = document.getElementById("lbPanelRegional");
+
+        function setBoard(which) {
+          const isG = which === "global";
+          lbGlobal.classList.toggle("is-active", isG);
+          lbRegional.classList.toggle("is-active", !isG);
+          lbPanelGlobal.hidden = !isG;
+          lbPanelRegional.hidden = isG;
+        }
+
+        lbGlobal.addEventListener("click", () => setBoard("global"));
+        lbRegional.addEventListener("click", () => setBoard("regional"));
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+.DS_Store
+
+# temp / export (do not commit)
+.tmp_roit_key/
+.roit_export/
+
+# common build artifacts
+node_modules/
+dist/
+.vercel/

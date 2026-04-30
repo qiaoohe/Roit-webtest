@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Still Hungry — Screen Flow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+        --sans: "Inter", system-ui, -apple-system, sans-serif;
+        --white: #ffffff;
+        --gray-50: #fafafa;
+        --gray-100: #f3f3f3;
+        --gray-150: #ebebeb;
+        --gray-200: #e6e6e6;
+        --gray-250: #dedede;
+        --gray-300: #d0d0d0;
+        --gray-400: #9a9a9a;
+        --gray-500: #666666;
+        --gray-600: #444444;
+        --black: #0a0a0a;
+        --radius-xl: 28px;
+        --radius-lg: 20px;
+        --radius-md: 14px;
+        --radius-pill: 999px;
+        /* Show one screen per horizontal step; page scrolls vertically */
+        --vh: 100vh;
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+        --page-footer: calc(120px + var(--safe-bottom));
+        /* Each screen is near full height; overflow scrolls vertically */
+        --slide-min-h: calc(var(--vh) - var(--page-footer) - 40px);
+        /* Unified book min height (Launch + wide-card) */
+        --unified-book-min-h: min(86vh, 680px);
+      }
+
+      @supports (height: 100dvh) {
+        :root {
+          --vh: 100dvh;
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        overflow-x: hidden;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--sans);
+        background: var(--white);
+        color: var(--black);
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .app {
+        box-sizing: border-box;
+        min-height: var(--vh);
+        padding: 24px 16px var(--page-footer);
+      }
+
+      .carousel {
+        position: relative;
+        width: 100%;
+        max-width: 1080px;
+        margin: 0 auto;
+        overflow-x: hidden;
+        overflow-y: visible;
+      }
+
+      /* Standard horizontal carousel: flex track + translateX */
+      .slide-stack {
+        --carousel-slides: 6;
+        --carousel-index: 0;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        width: calc(100% * var(--carousel-slides));
+        min-height: max(var(--slide-min-h), var(--unified-book-min-h));
+        transform: translateX(calc(var(--carousel-index) * -100% / var(--carousel-slides)));
+        transition: transform 0.38s cubic-bezier(0.25, 0.1, 0.25, 1);
+        will-change: transform;
+      }
+
+      .slide.book-page {
+        flex: 0 0 calc(100% / var(--carousel-slides));
+        width: calc(100% / var(--carousel-slides));
+        min-width: 0;
+        box-sizing: border-box;
+        position: relative;
+        min-height: max(var(--slide-min-h), var(--unified-book-min-h));
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 8px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .slide-stack {
+          transition: none;
+        }
+      }
+
+      /* —— Cho'Gath (03): guest vs unlocked panels —— */
+      .chogath-right {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+      }
+
+      .chogath-panel {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        flex: 1 1 0;
+        min-height: 0;
+        width: 100%;
+      }
+
+      .chogath-preview-slot {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #chogathGuestPanel .chogath-preview-slot .img-placeholder--card {
+        flex: 1 1 0;
+        width: 100%;
+        align-self: stretch;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0;
+      }
+
+      #chogathGuestPanel {
+        align-items: center;
+      }
+
+      #chogathGuestPanel .chogath-preview-slot {
+        align-self: stretch;
+      }
+
+      #chogathGuestPanel .btn-pill {
+        flex-shrink: 0;
+        margin-top: 24px;
+      }
+
+      .chogath-left-col {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .chogath-left-media {
+        flex: 1 1 0;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        margin: 16px 0;
+      }
+
+      .chogath-left-media .img-placeholder--chogath-left {
+        flex: 1 1 0;
+        min-height: 0;
+        width: 100%;
+        border-radius: var(--radius-md);
+      }
+
+      .chogath-panel.is-hidden {
+        display: none !important;
+      }
+
+      .chogath-panel.unlocked-stack {
+        justify-content: stretch;
+        gap: 16px;
+        padding-bottom: 4px;
+      }
+
+      /* Cho'Gath signed-in: fill right card + actions */
+      #chogathUnlockedPanel .inner-card {
+        flex: 1 1 0;
+        min-height: 0;
+        max-width: none;
+        margin: 0;
+        width: 100%;
+      }
+
+      #chogathUnlockedPanel .btn-row {
+        flex-shrink: 0;
+        margin-top: 0;
+      }
+
+      /* —— Launch screen (vertical card) —— */
+      .launch-shell {
+        width: min(100%, 492px);
+        min-height: var(--unified-book-min-h);
+        border: 1px solid var(--gray-250);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+      }
+
+      .launch-spine {
+        width: 8px;
+        flex-shrink: 0;
+        background: linear-gradient(90deg, #c8c8c8, #e2e2e2);
+        border-radius: 3px 0 0 3px;
+      }
+
+      .launch-card {
+        flex: 1;
+        background: var(--gray-150);
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        padding: 48px clamp(28px, 5vw, 40px) 36px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 8px 16px 40px rgba(0, 0, 0, 0.06);
+      }
+
+      .launch-card .kicker {
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0 0 28px;
+      }
+
+      .launch-card .display {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: clamp(2rem, 5.5vw, 2.65rem);
+        line-height: 1.08;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        margin: 0 0 auto;
+      }
+
+      .launch-card .body {
+        margin-top: 48px;
+        font-size: 0.95rem;
+        color: var(--gray-500);
+        line-height: 1.55;
+        max-width: min(380px, 100%);
+      }
+
+      .btn-pill {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        padding: 14px 32px;
+        border-radius: var(--radius-pill);
+        background: var(--black);
+        color: var(--white);
+        margin-top: 28px;
+      }
+
+      .btn-pill.secondary {
+        background: var(--white);
+        color: var(--black);
+        border: 1px solid var(--gray-300);
+      }
+
+      .btn-pill:hover {
+        opacity: 0.9;
+      }
+
+      .launch-card .legal {
+        margin-top: 28px;
+        font-size: 0.65rem;
+        color: var(--gray-400);
+        line-height: 1.45;
+        max-width: min(360px, 100%);
+      }
+
+      /* —— Shared wide card (01, 02, 03*, 04, 05) —— */
+      .wide-card {
+        width: min(100%, 960px);
+        min-height: var(--unified-book-min-h);
+        background: var(--gray-100);
+        border: 1px solid var(--gray-250);
+        border-radius: var(--radius-xl);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+      }
+
+      @media (max-width: 820px) {
+        .wide-card {
+          grid-template-columns: 1fr;
+          min-height: var(--unified-book-min-h);
+        }
+      }
+
+      .col {
+        padding: 40px 44px 36px;
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+      }
+
+      .wide-card > .col {
+        min-height: 0;
+      }
+
+      .col-light {
+        background: var(--gray-100);
+      }
+
+      .col-mid {
+        background: var(--gray-200);
+        border-left: 1px solid var(--gray-250);
+      }
+
+      @media (max-width: 820px) {
+        .col-mid {
+          border-left: none;
+          border-top: 1px solid var(--gray-250);
+        }
+      }
+
+      .eyebrow-serif {
+        font-family: var(--serif);
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin: 0 0 20px;
+      }
+
+      .headline-serif {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+        line-height: 1.12;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        margin: 0;
+      }
+
+      .body-sans {
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: var(--gray-500);
+        margin: 0;
+      }
+
+      .col .body-sans.bottom {
+        margin-top: auto;
+        padding-top: 24px;
+      }
+
+      .chapter-tabs {
+        display: flex;
+        gap: 22px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+
+      .chapter-tabs button {
+        background: none;
+        border: none;
+        font-family: var(--serif);
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--gray-400);
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .chapter-tabs button.is-active {
+        color: var(--black);
+        font-weight: 700;
+      }
+
+      /* Storybook · right side: Chapter 1–3 carousel inside this column only */
+      .storybook-right {
+        transition: background 0.28s ease;
+      }
+
+      .col.col-mid.storybook-right[data-chapter="1"] {
+        background: linear-gradient(165deg, #ececec 0%, var(--gray-200) 55%, #dadada 100%);
+      }
+
+      .col.col-mid.storybook-right[data-chapter="2"] {
+        background: linear-gradient(165deg, #efefef 0%, #e8e8e8 100%);
+      }
+
+      .col.col-mid.storybook-right[data-chapter="3"] {
+        background: linear-gradient(165deg, #eaeaea 0%, #dedede 100%);
+      }
+
+      .storybook-chapter-carousel {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .storybook-chapter-carousel .chapter-tabs {
+        flex-shrink: 0;
+      }
+
+      .storybook-chapter-viewport {
+        width: 100%;
+        overflow: hidden;
+        flex: 1 1 0;
+        min-height: 0;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      .storybook-chapter-track {
+        --storybook-index: 0;
+        --storybook-chapters: 3;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        width: calc(100% * var(--storybook-chapters));
+        height: 100%;
+        transform: translateX(calc(var(--storybook-index) * -100%));
+        transition: transform 0.36s cubic-bezier(0.25, 0.1, 0.25, 1);
+        will-change: transform;
+      }
+
+      .storybook-chapter-slide {
+        flex: 0 0 100%;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 14px 14px 12px;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 8px;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+        align-content: stretch;
+      }
+
+      .storybook-chapter-slide .body-sans {
+        margin: 0;
+        font-size: 0.84rem;
+        line-height: 1.52;
+        max-height: 8.4em;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .storybook-chapter-slide-visual {
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
+      }
+
+      .storybook-visual-play {
+        flex: 1 1 0;
+        min-height: 0;
+        width: 100%;
+        border-radius: var(--radius-md);
+        background: rgba(255, 255, 255, 0.4);
+        border: 1px dashed rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .storybook-visual-play .play-fab {
+        margin-top: 0;
+      }
+
+      .storybook-chapter-slide .img-placeholder--story {
+        flex: 1 1 0;
+        min-height: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: var(--radius-md);
+      }
+
+      .storybook-chapter-slide .img-placeholder--story::after {
+        width: min(38%, 60px);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .storybook-chapter-track {
+          transition: none;
+        }
+      }
+
+      .play-fab {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--white);
+        border: 1px solid var(--gray-300);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: auto;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+      }
+
+      .play-fab-glyph {
+        display: block;
+        margin-left: 4px;
+        font-size: 0.7rem;
+        line-height: 1;
+      }
+
+      /* Global image placeholder: simple stroke + soft fill */
+      .img-placeholder {
+        box-sizing: border-box;
+        width: 100%;
+        border: 1px dashed var(--gray-300);
+        background: var(--gray-150);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .img-placeholder::after {
+        content: "";
+        width: min(42%, 72px);
+        aspect-ratio: 4 / 3;
+        border-radius: 6px;
+        border: 1px solid var(--gray-250);
+        background: var(--gray-100);
+        opacity: 0.75;
+      }
+
+      .img-placeholder--wide {
+        flex: 1;
+        min-height: min(240px, 28vh);
+        border-radius: var(--radius-md);
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .img-placeholder--round {
+        width: min(220px, 55vw);
+        height: min(220px, 55vw);
+        border-radius: 50%;
+        margin: 24px auto;
+        flex-shrink: 0;
+      }
+
+      .img-placeholder--round::after {
+        border-radius: 50%;
+        aspect-ratio: 1;
+        width: min(38%, 56px);
+      }
+
+      .img-placeholder--thumb {
+        width: 72px;
+        height: 72px;
+        max-width: 100%;
+        margin: 16px auto;
+        border-radius: 12px;
+        flex-shrink: 0;
+      }
+
+      .img-placeholder--thumb::after {
+        width: 56%;
+        border-radius: 4px;
+      }
+
+      .img-placeholder--card {
+        width: 100%;
+        min-height: 240px;
+        border-radius: var(--radius-lg);
+      }
+
+      .img-placeholder--banner {
+        width: 100%;
+        min-height: 140px;
+        margin: 16px 0;
+        border-radius: var(--radius-md);
+      }
+
+      .feast-right-title {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 1.25rem;
+        text-align: center;
+        margin: 0 0 8px;
+      }
+
+      .feast-desc-dup {
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--gray-400);
+        margin: 0 0 8px;
+      }
+
+      .feast-right-col {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .feast-lock-status {
+        font-family: var(--sans);
+        font-size: 0.74rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-align: center;
+        margin: 4px 0 12px;
+        color: var(--gray-500);
+      }
+
+      .feast-lock-status--unlocked {
+        color: var(--black);
+      }
+
+      .feast-round-slot {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+        padding: 4px 0 12px;
+      }
+
+      .feast-round-slot .img-placeholder--round {
+        margin: 0;
+      }
+
+      .feast-right-foot {
+        flex-shrink: 0;
+        margin-top: auto;
+      }
+
+      .feast-status {
+        font-size: 0.78rem;
+        color: var(--gray-500);
+        text-align: center;
+        margin-top: auto;
+        margin-bottom: 12px;
+      }
+
+      .slider-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .slider-row input[type="range"] {
+        flex: 1;
+        accent-color: var(--black);
+        height: 4px;
+      }
+
+      .slider-val {
+        font-family: var(--sans);
+        font-weight: 600;
+        font-size: 0.95rem;
+        min-width: 1.25rem;
+        text-align: right;
+      }
+
+      /* Inner preview card (Cho'Gath) */
+      .inner-card {
+        background: var(--gray-300);
+        border-radius: var(--radius-lg);
+        padding: 28px 24px 24px;
+        max-width: 280px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .inner-card .small-serif {
+        font-family: var(--serif);
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin: 0 0 12px;
+      }
+
+      .inner-card .big-serif {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 1.05rem;
+        line-height: 1.2;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin: 0 0 16px;
+      }
+
+      .inner-card .tiny {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        line-height: 1.45;
+        margin: 0;
+      }
+
+      .btn-row {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .btn-pill.sm {
+        margin-top: 0;
+        padding: 11px 22px;
+        font-size: 0.82rem;
+      }
+
+      /* Leaderboard */
+      .lb-heading-block .headline-serif {
+        margin-top: 8px;
+      }
+
+      .personal-card {
+        background: var(--gray-150);
+        border-radius: var(--radius-md);
+        padding: 18px;
+        margin-top: 20px;
+      }
+
+      .lb-left-col {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .lb-left-col .personal-card--fill {
+        flex: 1 1 0;
+        min-height: 0;
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .lb-left-col .personal-card--fill .stat-stack {
+        flex: 1 1 auto;
+      }
+
+      .personal-card strong {
+        display: block;
+        font-family: var(--serif);
+        font-size: 1rem;
+        margin-bottom: 4px;
+      }
+
+      .personal-card .hint {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+        margin: 0 0 16px;
+      }
+
+      .stat-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .stat-box {
+        background: var(--white);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--gray-250);
+        padding: 18px;
+        text-align: left;
+      }
+
+      .stat-box .num {
+        font-size: 1.75rem;
+        font-weight: 700;
+        font-family: var(--sans);
+        text-align: left;
+      }
+
+      .stat-box .lbl {
+        font-size: 0.72rem;
+        color: var(--gray-400);
+        margin-top: 4px;
+        text-align: left;
+      }
+
+      .epilogue-right-col {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .epilogue-lead {
+        flex-shrink: 0;
+        margin-bottom: 0;
+      }
+
+      .epilogue-media-slot {
+        flex: 1 1 0;
+        min-height: 120px;
+        margin: 16px 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .epilogue-media-slot .img-placeholder--epilogue-fill {
+        flex: 1 1 0;
+        min-height: 0;
+        width: 100%;
+        border-radius: var(--radius-md);
+      }
+
+      .epilogue-cta {
+        flex-shrink: 0;
+        text-align: center;
+        margin-top: auto;
+      }
+
+      .lb-foot {
+        font-size: 0.72rem;
+        color: var(--gray-400);
+        margin-top: 16px;
+      }
+
+      .lb-left-col .lb-foot {
+        flex-shrink: 0;
+        margin-top: auto;
+      }
+
+      .global-panel {
+        background: var(--gray-150);
+        border-radius: var(--radius-md);
+        padding: 20px 16px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .lb-scroll {
+        overflow: visible;
+      }
+
+      .global-panel h3 {
+        font-family: var(--sans);
+        font-weight: 700;
+        font-size: 1rem;
+        margin: 0 0 4px;
+      }
+
+      .global-panel .sub {
+        font-size: 0.78rem;
+        color: var(--gray-400);
+        margin: 0 0 16px;
+      }
+
+      .lb-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        font-size: 0.82rem;
+      }
+
+      .lb-table th {
+        text-align: left;
+        font-weight: 500;
+        color: var(--gray-400);
+        font-size: 0.72rem;
+        padding: 0 10px 4px;
+      }
+
+      .lb-table td {
+        background: var(--white);
+        border: 1px solid var(--gray-250);
+        padding: 12px 14px;
+        border-radius: 10px;
+      }
+
+      .lb-table td:nth-child(1) {
+        color: var(--gray-400);
+        width: 52px;
+      }
+
+      .lb-table td:nth-child(2) {
+        font-weight: 600;
+      }
+
+      .lb-table td:nth-child(3) {
+        font-weight: 600;
+        text-align: right;
+      }
+
+      /* Modal slides */
+      .modal-slide {
+        width: min(100%, 420px);
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 26px 26px 22px;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      }
+
+      .modal-slide h2 {
+        font-family: var(--serif);
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin: 0 0 18px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .modal-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--gray-200);
+        margin-bottom: 18px;
+      }
+
+      .modal-head h2 {
+        border: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .modal-close {
+        border: none;
+        background: none;
+        font-size: 1.35rem;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--gray-500);
+        padding: 0 4px;
+      }
+
+      .field-label {
+        font-size: 0.72rem;
+        color: var(--gray-400);
+        text-transform: none;
+        letter-spacing: 0;
+        margin-bottom: 6px;
+        display: block;
+      }
+
+      .field-box {
+        width: 100%;
+        border: 1px solid var(--gray-250);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 0.78rem;
+        word-break: break-all;
+        color: var(--gray-600);
+        margin-bottom: 18px;
+      }
+
+      .social-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .social-row button {
+        font-family: var(--sans);
+        font-size: 0.78rem;
+        padding: 10px 6px;
+        border-radius: 10px;
+        border: 1px solid var(--gray-250);
+        background: var(--white);
+        cursor: pointer;
+      }
+
+      .social-row button:hover {
+        background: var(--gray-100);
+      }
+
+      .btn-pill.block {
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .modal-slide .preview-box {
+        background: var(--gray-200);
+        border-radius: var(--radius-md);
+        padding: 22px 20px;
+        margin-bottom: 18px;
+      }
+
+      .modal-slide .preview-box .big-serif {
+        font-size: 1.1rem;
+      }
+
+      /* Popups triggered from slide 03 only */
+      .popup-layer {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: grid;
+        place-items: center;
+        padding: 24px 16px;
+      }
+
+      .popup-layer[hidden] {
+        display: none !important;
+      }
+
+      .popup-layer .popup-backdrop {
+        position: absolute;
+        inset: 0;
+        border: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        background: rgba(42, 42, 42, 0.52);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      .popup-layer .popup-dialog {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 420px);
+        max-height: min(90vh, 640px);
+        overflow: auto;
+      }
+
+      body.popup-open .nav-arrows,
+      body.popup-open .slide-indicator {
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .gate-body {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.55;
+        color: var(--gray-500);
+      }
+
+      .gate-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 22px;
+      }
+
+      /* Nav arrows (fixed bottom) */
+      .nav-arrows {
+        position: fixed;
+        bottom: calc(24px + var(--safe-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 14px;
+        z-index: 20;
+      }
+
+      .nav-arrows button {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 1px solid var(--black);
+        background: var(--white);
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--black);
+        transition: opacity 0.2s, transform 0.15s;
+      }
+
+      .nav-arrows button:hover:not(:disabled) {
+        transform: scale(1.04);
+      }
+
+      .nav-arrows button:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+
+      .slide-indicator {
+        position: fixed;
+        bottom: calc(84px + var(--safe-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.72rem;
+        color: var(--gray-400);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        z-index: 19;
+        max-width: calc(100vw - 24px);
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <p class="slide-indicator" id="indicator" aria-live="polite">01 / 06</p>
+
+      <div class="carousel" aria-roledescription="carousel">
+        <div class="slide-stack" id="slideStack" role="group" aria-label="Screen flow">
+          <!-- 1 Launch -->
+          <div class="slide book-page" data-slide-index="0" role="group" aria-label="Launch">
+            <div class="launch-shell">
+              <div class="launch-spine" aria-hidden="true"></div>
+              <div class="launch-card">
+                <p class="kicker">Still Hungry</p>
+                <h1 class="display">
+                  The whole<br />
+                  return<br />
+                  banquet.
+                </h1>
+                <p class="body">
+                  Still Hungry isn't a tagline — it's the match you didn't finish and the gray icons that stopped answering.
+                </p>
+                <button type="button" class="btn-pill" id="btnLaunchEnter">Enter the feast</button>
+                <p class="legal">
+                  Rewards and rules follow in-game announcements and regional publisher notices.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2 01 Storybook -->
+          <div class="slide book-page" data-slide-index="1" role="group" aria-label="Storybook Remember">
+            <div class="wide-card">
+              <div class="col col-light">
+                <p class="eyebrow-serif">Storybook · Remember</p>
+                <h2 class="headline-serif">Those nights in front of the screen.</h2>
+                <p class="body-sans bottom">
+                  Those nights weren’t about patch notes — they were cheap keyboards wearing smooth, GPUs humming too loud, and five-stack voice chat
+                  dissolving into ugly laughter after a throw nobody really blamed anyone for. Blue light washed your face while the lobby stretched past
+                  “one more,” until tomorrow became a promise instead of a clock.
+                </p>
+              </div>
+              <div class="col col-mid storybook-right" id="storybookChapterRoot" data-chapter="1">
+                <div class="storybook-chapter-carousel">
+                  <div class="chapter-tabs" role="tablist" aria-label="Chapters (right panel carousel)">
+                    <button
+                      type="button"
+                      class="is-active"
+                      role="tab"
+                      aria-selected="true"
+                      aria-controls="sb-carousel-slide-0"
+                      id="sb-tab-0"
+                      tabindex="0"
+                    >
+                      Chapter 1
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="sb-carousel-slide-1"
+                      id="sb-tab-1"
+                      tabindex="-1"
+                    >
+                      Chapter 2
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="sb-carousel-slide-2"
+                      id="sb-tab-2"
+                      tabindex="-1"
+                    >
+                      Chapter 3
+                    </button>
+                  </div>
+                  <div class="storybook-chapter-viewport" id="storybookChapterViewport">
+                    <div class="storybook-chapter-track" id="storybookChapterTrack">
+                      <section
+                        class="storybook-chapter-slide"
+                        id="sb-carousel-slide-0"
+                        role="tabpanel"
+                        aria-labelledby="sb-tab-0"
+                        aria-hidden="false"
+                      >
+                        <p class="body-sans">
+                          Chapter 1 — Nights lit by monitors: glow on your face, worn keys, five-stack laughter rolling across the desk. Forget rank for a minute;
+                          remember how it felt. Tap play when your clip lives here.
+                        </p>
+                        <div class="storybook-chapter-slide-visual">
+                          <div class="storybook-visual-play">
+                            <button type="button" class="play-fab" aria-label="Play chapter clip">
+                              <span class="play-fab-glyph" aria-hidden="true">▶</span>
+                            </button>
+                          </div>
+                        </div>
+                      </section>
+                      <section
+                        class="storybook-chapter-slide"
+                        id="sb-carousel-slide-1"
+                        role="tabpanel"
+                        aria-labelledby="sb-tab-1"
+                        aria-hidden="true"
+                      >
+                        <p class="body-sans">
+                          Chapter 2 — Patch nights that dragged until dawn: stale pizza, reruns of old Worlds clips, and the quiet ping when everyone finally came
+                          back online. Swap this block for stills or concept frames.
+                        </p>
+                        <div class="storybook-chapter-slide-visual">
+                          <div class="img-placeholder img-placeholder--story" role="img" aria-label="Chapter 2 image placeholder"></div>
+                        </div>
+                      </section>
+                      <section
+                        class="storybook-chapter-slide"
+                        id="sb-carousel-slide-2"
+                        role="tabpanel"
+                        aria-labelledby="sb-tab-2"
+                        aria-hidden="true"
+                      >
+                        <p class="body-sans">
+                          Chapter 3 — The roster grayed out but the memories didn’t: dodgy cafes, borrowed headsets, one bar of LTE clamped between thumb and
+                          palm. Drop hero art or mood boards into the slot below.
+                        </p>
+                        <div class="storybook-chapter-slide-visual">
+                          <div class="img-placeholder img-placeholder--story" role="img" aria-label="Chapter 3 image placeholder"></div>
+                        </div>
+                      </section>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 02 Feast table -->
+          <div class="slide book-page" data-slide-index="2" role="group" aria-label="The Feast Table">
+            <div class="wide-card">
+              <div class="col col-light">
+                <p class="eyebrow-serif">The Feast · Table</p>
+                <h2 class="headline-serif">Every returning friend is another dish.</h2>
+                <div class="img-placeholder img-placeholder--wide" role="img" aria-label="Image placeholder"></div>
+                <p class="body-sans bottom">
+                  Every Summoner who steps back onto the Rift because of you pulls the feast forward — Cho'Gath grows with you. More returns, richer rewards.
+                  Drag the slider to preview your spread.
+                </p>
+              </div>
+              <div class="col col-mid feast-right-col">
+                <div class="feast-right-head">
+                  <h3 class="feast-right-title">Dual-login bundle</h3>
+                  <p class="feast-desc-dup">Description Description</p>
+                  <p class="feast-lock-status feast-lock-status--locked" id="feastLockStatus" aria-live="polite">Locked</p>
+                </div>
+                <div class="feast-round-slot">
+                  <div class="img-placeholder img-placeholder--round" role="img" aria-label="Image placeholder"></div>
+                </div>
+                <div class="feast-right-foot">
+                  <p class="feast-status">At 1 returning friends invited, you earn: Dual-login bundle</p>
+                  <div class="slider-row">
+                    <input type="range" min="1" max="10" value="1" aria-label="Returning friends" />
+                    <span class="slider-val">1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Cho'Gath Card (composed states + popups) -->
+          <div class="slide book-page" data-slide-index="3" role="group" aria-label="Cho'Gath Card">
+            <div class="wide-card">
+              <div class="col col-light chogath-left-col">
+                <p class="eyebrow-serif">Cho'Gath Card</p>
+                <h2 class="headline-serif">Send a card to a friend you've lost touch with.</h2>
+                <div class="chogath-left-media">
+                  <div class="img-placeholder img-placeholder--chogath-left" role="img" aria-label="Image placeholder"></div>
+                </div>
+                <p class="body-sans bottom">
+                  Write one honest line and generate a card worth sending — carry the feast from here to their chat. Sign in to copy your invite link.
+                </p>
+              </div>
+              <div class="col col-mid chogath-right">
+                <div id="chogathGuestPanel" class="chogath-panel">
+                  <div class="chogath-preview-slot">
+                    <div class="img-placeholder img-placeholder--card" role="img" aria-label="Image placeholder"></div>
+                  </div>
+                  <button type="button" class="btn-pill" id="btnChogathLogin">Sign in</button>
+                </div>
+                <div id="chogathUnlockedPanel" class="chogath-panel unlocked-stack is-hidden">
+                  <div class="inner-card">
+                    <p class="small-serif">A greeting from the feast</p>
+                    <p class="big-serif">Thelma saved you a seat.</p>
+                    <p class="tiny">The table is set on Wild Rift. Tap the link. Cho'Gath has been waiting.</p>
+                  </div>
+                  <div class="btn-row">
+                    <button type="button" class="btn-pill sm" id="btnOpenShareCardModal">Download Card</button>
+                    <button type="button" class="btn-pill sm secondary" id="btnOpenShareLinkModal">Share Link</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 04 Leaderboard -->
+          <div class="slide book-page" data-slide-index="4" role="group" aria-label="Leaderboard">
+            <div class="wide-card">
+              <div class="col col-light lb-left-col">
+                <div class="lb-heading-block">
+                  <p class="eyebrow-serif" style="margin-bottom: 8px">Leaderboard</p>
+                  <h2 class="headline-serif">Who brought back the most friends?</h2>
+                </div>
+                <div class="personal-card personal-card--fill">
+                  <strong>Personal</strong>
+                  <p class="hint">Your feast count, current size, and rank.</p>
+                  <div class="stat-stack">
+                    <div class="stat-box">
+                      <div class="num">12</div>
+                      <div class="lbl">Returns</div>
+                    </div>
+                    <div class="stat-box">
+                      <div class="num">#184</div>
+                      <div class="lbl">Rank</div>
+                    </div>
+                  </div>
+                </div>
+                <p class="lb-foot">Ranked by successful return invites — toggle Global or your regional board.</p>
+              </div>
+              <div class="col col-mid">
+                <div class="global-panel">
+                  <h3>Global Top 10</h3>
+                  <p class="sub">Real-time top feeders worldwide.</p>
+                  <div class="lb-scroll">
+                    <table class="lb-table">
+                      <thead>
+                        <tr>
+                          <th>Rank</th>
+                          <th>Player</th>
+                          <th>Returns</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>#1</td>
+                          <td>PebbleKing</td>
+                          <td>118</td>
+                        </tr>
+                        <tr>
+                          <td>#1</td>
+                          <td>PebbleKing</td>
+                          <td>118</td>
+                        </tr>
+                        <tr>
+                          <td>#1</td>
+                          <td>PebbleKing</td>
+                          <td>118</td>
+                        </tr>
+                        <tr>
+                          <td>#1</td>
+                          <td>PebbleKing</td>
+                          <td>118</td>
+                        </tr>
+                        <tr>
+                          <td>#1</td>
+                          <td>PebbleKing</td>
+                          <td>118</td>
+                        </tr>
+                        <tr>
+                          <td>#1</td>
+                          <td>PebbleKing</td>
+                          <td>118</td>
+                        </tr>
+                        <tr>
+                          <td>#1</td>
+                          <td>PebbleKing</td>
+                          <td>118</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6 5-a6cd Epilogue -->
+          <div class="slide book-page" data-slide-index="5" role="group" aria-label="Epilogue">
+            <div class="wide-card">
+              <div class="col col-light">
+                <p class="eyebrow-serif">Still Hungry</p>
+                <h2 class="headline-serif">You can turn the last page — the story doesn't have to end.</h2>
+                <p class="body-sans bottom">
+                  The lights above the Rift can dim; the gray icons on your list don’t have to stay quiet forever. This return feast was never about who
+                  invites the most — it’s about pulling scattered names back into voice chat, back into laughter, back into “one more.”
+                </p>
+              </div>
+              <div class="col col-mid epilogue-right-col">
+                <p class="body-sans epilogue-lead">
+                  Campaigns close; Still Hungry lingers — in the moments you remember old teammates, in the second you almost send the link again, in the line
+                  you write on a card and the seat you leave open. The next page starts the moment you hit send.
+                </p>
+                <div class="epilogue-media-slot">
+                  <div class="img-placeholder img-placeholder--epilogue-fill" role="img" aria-label="Image placeholder"></div>
+                </div>
+                <div class="epilogue-cta">
+                  <button type="button" class="btn-pill" id="btnEpilogueInvite">Invite Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-arrows" aria-label="Screen navigation">
+        <button type="button" id="prevBtn" aria-label="Previous screen">←</button>
+        <button type="button" id="nextBtn" aria-label="Next screen">→</button>
+      </nav>
+    </div>
+
+    <!-- 03 CTA → Share link（PNG 03-1-1） -->
+    <div class="popup-layer" id="popupShareLink" hidden role="dialog" aria-modal="true" aria-labelledby="popupShareLinkTitle">
+      <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
+      <div class="popup-dialog modal-slide">
+        <div class="modal-head">
+          <h2 id="popupShareLinkTitle">Share link</h2>
+          <button type="button" class="modal-close popup-close" aria-label="Close">×</button>
+        </div>
+        <label class="field-label">Your Link</label>
+        <div class="field-box">wildrift.app/the-feast?invite=demo-signed-in&amp;src=card</div>
+        <label class="field-label">Share on social media</label>
+        <div class="social-row">
+          <button type="button" data-social="x">X</button>
+          <button type="button" data-social="instagram">Instagram</button>
+          <button type="button" data-social="facebook">Facebook</button>
+        </div>
+        <button type="button" class="btn-pill block" id="btnPopupCopyLink">Copy Link</button>
+      </div>
+    </div>
+
+    <!-- Sign-in required -->
+    <div class="popup-layer" id="popupNeedSignIn" hidden role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+      <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
+      <div class="popup-dialog modal-slide">
+        <div class="modal-head">
+          <h2 id="gateTitle">Sign in required</h2>
+          <button type="button" class="modal-close popup-close" aria-label="Close">×</button>
+        </div>
+        <p class="gate-body">Please sign in to copy your invite link, download the card, and share it on social media.</p>
+        <div class="gate-actions">
+          <button type="button" class="btn-pill secondary sm" id="btnGateDismiss">Not now</button>
+          <button type="button" class="btn-pill sm" id="btnGateUnlock">Sign in</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 CTA → Share Card（PNG 03-1-2） -->
+    <div class="popup-layer" id="popupShareCard" hidden role="dialog" aria-modal="true" aria-labelledby="popupShareCardTitle">
+      <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
+      <div class="popup-dialog modal-slide">
+        <div class="modal-head">
+          <h2 id="popupShareCardTitle" style="font-family: var(--sans); font-weight: 700">Share Card</h2>
+          <button type="button" class="modal-close popup-close" aria-label="Close">×</button>
+        </div>
+        <div class="preview-box">
+          <p class="small-serif" style="margin-bottom: 10px">A greeting from the feast</p>
+          <p class="big-serif">Thelma saved you a seat.</p>
+          <p class="tiny">The table is set on Wild Rift. Tap the link. Cho'Gath has been waiting.</p>
+        </div>
+        <label class="field-label">Share this on your social media</label>
+        <div class="social-row">
+          <button type="button" data-social="x">X</button>
+          <button type="button" data-social="instagram">Instagram</button>
+          <button type="button" data-social="facebook">Facebook</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const slideStack = document.getElementById("slideStack");
+        const slides = Array.from(slideStack.querySelectorAll(".slide.book-page"));
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const indicator = document.getElementById("indicator");
+        const total = slides.length;
+        let index = 0;
+        let busy = false;
+        let busyFallbackTimer = null;
+
+        slideStack.style.setProperty("--carousel-slides", String(total));
+
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const labels = [
+          "Launch",
+          "01 Storybook",
+          "02 Feast",
+          "03 Cho'Gath Card (+ popups)",
+          "04 Leaderboard",
+          "05 Epilogue",
+        ];
+
+        const popupShareLink = document.getElementById("popupShareLink");
+        const popupShareCard = document.getElementById("popupShareCard");
+        const popupNeedSignIn = document.getElementById("popupNeedSignIn");
+        var guestPanel = document.getElementById("chogathGuestPanel");
+        var unlockedPanel = document.getElementById("chogathUnlockedPanel");
+        var isSignedIn = false;
+
+        function closePopups() {
+          popupShareLink.hidden = true;
+          popupShareCard.hidden = true;
+          popupNeedSignIn.hidden = true;
+          document.body.classList.remove("popup-open");
+        }
+
+        function openPopup(el) {
+          closePopups();
+          el.hidden = false;
+          document.body.classList.add("popup-open");
+          var closeBtn = el.querySelector(".popup-close");
+          if (closeBtn) closeBtn.focus();
+        }
+
+        function openNeedSignInPopup() {
+          closePopups();
+          popupNeedSignIn.hidden = false;
+          document.body.classList.add("popup-open");
+          var unlockBtn = document.getElementById("btnGateUnlock");
+          if (unlockBtn) unlockBtn.focus();
+        }
+
+        function unlockChogathPanels() {
+          guestPanel.classList.add("is-hidden");
+          unlockedPanel.classList.remove("is-hidden");
+        }
+
+        document.getElementById("btnChogathLogin").addEventListener("click", function () {
+          openNeedSignInPopup();
+        });
+
+        document.getElementById("btnGateDismiss").addEventListener("click", closePopups);
+
+        document.getElementById("btnGateUnlock").addEventListener("click", function () {
+          isSignedIn = true;
+          closePopups();
+          unlockChogathPanels();
+        });
+
+        document.getElementById("btnEpilogueInvite").addEventListener("click", function () {
+          if (isSignedIn) {
+            openPopup(popupShareLink);
+          } else {
+            openNeedSignInPopup();
+          }
+        });
+
+        document.getElementById("btnOpenShareLinkModal").addEventListener("click", function () {
+          openPopup(popupShareLink);
+        });
+
+        document.getElementById("btnOpenShareCardModal").addEventListener("click", function () {
+          openPopup(popupShareCard);
+        });
+
+        document.querySelectorAll(".popup-layer .popup-backdrop").forEach(function (btn) {
+          btn.addEventListener("click", closePopups);
+        });
+
+        document.querySelectorAll(".popup-layer .popup-close").forEach(function (btn) {
+          btn.addEventListener("click", closePopups);
+        });
+
+        document.getElementById("btnPopupCopyLink").addEventListener("click", function () {
+          closePopups();
+        });
+
+        function getInviteUrl() {
+          var box = popupShareLink.querySelector(".field-box");
+          if (!box) return "";
+          var raw = (box.textContent || "").trim();
+          if (!raw) return "";
+          if (/^https?:\/\//i.test(raw)) return raw;
+          return "https://" + raw;
+        }
+
+        function openExternal(url) {
+          if (!url) return;
+          window.open(url, "_blank", "noopener,noreferrer");
+        }
+
+        function handleSocialClick(e) {
+          var btn = e.target.closest("button[data-social]");
+          if (!btn) return;
+          var social = btn.getAttribute("data-social");
+          var inviteUrl = encodeURIComponent(getInviteUrl());
+          var text = encodeURIComponent("Join me at the feast.");
+          if (social === "x") {
+            openExternal("https://twitter.com/intent/tweet?url=" + inviteUrl + "&text=" + text);
+          } else if (social === "facebook") {
+            openExternal("https://www.facebook.com/sharer/sharer.php?u=" + inviteUrl);
+          } else if (social === "instagram") {
+            openExternal("https://www.instagram.com/");
+          }
+        }
+
+        popupShareLink.querySelector(".social-row").addEventListener("click", handleSocialClick);
+        popupShareCard.querySelector(".social-row").addEventListener("click", handleSocialClick);
+
+        function releaseBusy() {
+          window.clearTimeout(busyFallbackTimer);
+          busyFallbackTimer = null;
+          busy = false;
+        }
+
+        slideStack.addEventListener("transitionend", function (e) {
+          if (e.target !== slideStack || e.propertyName !== "transform") return;
+          releaseBusy();
+        });
+
+        function renderChrome() {
+          prevBtn.disabled = index === 0;
+          nextBtn.disabled = index === total - 1;
+          indicator.textContent =
+            String(index + 1).padStart(2, "0") + " / " + String(total).padStart(2, "0") + " · " + labels[index];
+          slides.forEach(function (el, i) {
+            el.setAttribute("aria-hidden", i === index ? "false" : "true");
+          });
+        }
+
+        function renderImmediate() {
+          slideStack.style.setProperty("--carousel-index", String(index));
+          renderChrome();
+        }
+
+        function armBusyFallback() {
+          window.clearTimeout(busyFallbackTimer);
+          if (prefersReducedMotion) {
+            busy = false;
+            return;
+          }
+          busyFallbackTimer = window.setTimeout(releaseBusy, 480);
+        }
+
+        function go(delta) {
+          if (busy || document.body.classList.contains("popup-open")) return;
+          var target = index + delta;
+          if (target < 0 || target >= total) return;
+          busy = true;
+          index = target;
+          slideStack.style.setProperty("--carousel-index", String(index));
+          renderChrome();
+          armBusyFallback();
+        }
+
+        prevBtn.addEventListener("click", function () {
+          go(-1);
+        });
+
+        nextBtn.addEventListener("click", function () {
+          go(1);
+        });
+
+        window.addEventListener("keydown", function (e) {
+          if (document.body.classList.contains("popup-open")) {
+            if (e.key === "Escape") {
+              e.preventDefault();
+              closePopups();
+            }
+            return;
+          }
+          if (e.key === "ArrowLeft") go(-1);
+          else if (e.key === "ArrowRight") go(1);
+        });
+
+        renderImmediate();
+
+        var launchEnter = document.getElementById("btnLaunchEnter");
+        if (launchEnter) {
+          launchEnter.addEventListener("click", function () {
+            if (index === 0) go(1);
+            else index = 1;
+          });
+        }
+
+        (function initStorybookChapterCarousel() {
+          var root = document.getElementById("storybookChapterRoot");
+          var track = document.getElementById("storybookChapterTrack");
+          if (!root || !track) return;
+          var tablist = root.querySelector('[role="tablist"]');
+          var tabs = Array.from(root.querySelectorAll(".chapter-tabs [role='tab']"));
+          var slidePanels = Array.from(track.querySelectorAll(".storybook-chapter-slide"));
+
+          function activateChapter(i) {
+            var idx = Math.max(0, Math.min(tabs.length - 1, i));
+            track.style.setProperty("--storybook-index", String(idx));
+            tabs.forEach(function (t, j) {
+              var on = j === idx;
+              t.classList.toggle("is-active", on);
+              t.setAttribute("aria-selected", on ? "true" : "false");
+              t.tabIndex = on ? 0 : -1;
+            });
+            slidePanels.forEach(function (p, j) {
+              p.setAttribute("aria-hidden", j === idx ? "false" : "true");
+            });
+            root.setAttribute("data-chapter", String(idx + 1));
+          }
+
+          tabs.forEach(function (tab, i) {
+            tab.addEventListener("click", function () {
+              activateChapter(i);
+              tab.focus();
+            });
+          });
+
+          if (tablist) {
+            tablist.addEventListener("keydown", function (e) {
+              var focusIdx = tabs.indexOf(document.activeElement);
+              var cur = focusIdx >= 0 ? focusIdx : -1;
+              if (cur < 0) {
+                for (var ti = 0; ti < tabs.length; ti++) {
+                  if (tabs[ti].getAttribute("aria-selected") === "true") {
+                    cur = ti;
+                    break;
+                  }
+                }
+              }
+              if (cur < 0) cur = 0;
+              var next = cur;
+              if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                e.preventDefault();
+                e.stopPropagation();
+                next = Math.min(tabs.length - 1, cur + 1);
+              } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                e.preventDefault();
+                e.stopPropagation();
+                next = Math.max(0, cur - 1);
+              } else if (e.key === "Home") {
+                e.preventDefault();
+                e.stopPropagation();
+                next = 0;
+              } else if (e.key === "End") {
+                e.preventDefault();
+                e.stopPropagation();
+                next = tabs.length - 1;
+              } else {
+                return;
+              }
+              activateChapter(next);
+              tabs[next].focus();
+            });
+          }
+        })();
+
+        // Feast slider (slide index 2)
+        var feastSlide = slideStack.querySelector('.slide.book-page[data-slide-index="2"]');
+        if (feastSlide) {
+          var range = feastSlide.querySelector('input[type="range"]');
+          var val = feastSlide.querySelector(".slider-val");
+          var status = feastSlide.querySelector(".feast-status");
+          var title = feastSlide.querySelector(".feast-right-title");
+          var feastLockStatus = feastSlide.querySelector("#feastLockStatus");
+          if (range && val) {
+            var titles = [
+              "Dual-login bundle",
+              "XP boosts & items",
+              "Still Hungry loading screen or emote",
+              "Rare loot chest",
+              "Exclusive border & summoner icon",
+            ];
+            function syncFeast() {
+              val.textContent = range.value;
+              var n = parseInt(range.value, 10);
+              var ti = Math.min(Math.max(n - 1, 0), titles.length - 1);
+              if (title) title.textContent = titles[ti];
+              if (status)
+                status.textContent =
+                  "At " + n + " returning friends invited, you earn: " + (title ? title.textContent : "");
+              if (feastLockStatus) {
+                var unlocked = n >= 5;
+                feastLockStatus.textContent = unlocked ? "Unlocked" : "Locked";
+                feastLockStatus.classList.toggle("feast-lock-status--unlocked", unlocked);
+                feastLockStatus.classList.toggle("feast-lock-status--locked", !unlocked);
+              }
+            }
+            range.addEventListener("input", syncFeast);
+            syncFeast();
+          }
+        }
+
+      })();
+    </script>
+  </body>
+</html>
