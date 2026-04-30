@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Still Hungry — Screen Flow</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Still Hungry" />
+    <meta property="og:description" content="The whole return banquet." />
+    <meta property="og:image" content="/cover.png" />
+    <meta property="og:image:alt" content="Still Hungry cover" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Still Hungry" />
+    <meta name="twitter:description" content="The whole return banquet." />
+    <meta name="twitter:image" content="/cover.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -237,24 +246,7 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        position: relative;
         box-shadow: 8px 16px 40px rgba(0, 0, 0, 0.06);
-      }
-
-      .launch-cover-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .launch-cover-cta {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 46px;
-        margin-top: 0;
-        z-index: 2;
       }
 
       .launch-card .kicker {
@@ -1147,9 +1139,20 @@
           <div class="slide book-page" data-slide-index="0" role="group" aria-label="Launch">
             <div class="launch-shell">
               <div class="launch-spine" aria-hidden="true"></div>
-              <div class="launch-card" style="padding: 0">
-                <img class="launch-cover-img" src="./cover.png" alt="Still Hungry cover" />
-                <button type="button" class="btn-pill launch-cover-cta" id="btnLaunchEnter">Enter the feast</button>
+              <div class="launch-card">
+                <p class="kicker">Still Hungry</p>
+                <h1 class="display">
+                  The whole<br />
+                  return<br />
+                  banquet.
+                </h1>
+                <p class="body">
+                  Still Hungry isn't a tagline — it's the match you didn't finish and the gray icons that stopped answering.
+                </p>
+                <button type="button" class="btn-pill" id="btnLaunchEnter">Enter the feast</button>
+                <p class="legal">
+                  Rewards and rules follow in-game announcements and regional publisher notices.
+                </p>
               </div>
             </div>
           </div>
