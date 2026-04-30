@@ -667,88 +667,6 @@
         color: var(--gray-500);
       }
 
-      .feed-type-carousel {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        align-items: flex-start;
-        margin: 2px 0 14px;
-        flex-wrap: wrap;
-      }
-
-      .feed-type {
-        appearance: none;
-        border: 1px solid var(--gray-250);
-        background: rgba(255, 255, 255, 0.65);
-        border-radius: 14px;
-        padding: 10px 10px 8px;
-        cursor: pointer;
-        display: grid;
-        justify-items: center;
-        gap: 6px;
-        min-width: 92px;
-      }
-
-      .feed-type .thumb {
-        width: 34px;
-        height: 34px;
-        border-radius: 12px;
-        border: 1px solid var(--gray-250);
-        background: var(--gray-150);
-        position: relative;
-      }
-
-      .feed-type .thumb::after {
-        content: "";
-        position: absolute;
-        inset: 9px;
-        border-radius: 8px;
-        border: 1px solid var(--gray-300);
-        background: rgba(10, 10, 10, 0.08);
-      }
-
-      .feed-type .lbl {
-        font-size: 0.72rem;
-        color: var(--gray-600);
-        font-weight: 600;
-        letter-spacing: 0.01em;
-      }
-
-      .feed-type.is-active {
-        border-color: var(--black);
-        background: var(--white);
-      }
-
-      .feed-type.is-active .lbl {
-        color: var(--black);
-      }
-
-      /* Feast accent styles per feed type */
-      .slide.book-page[data-slide-index="2"] {
-        --feast-accent: rgba(10, 10, 10, 0.18);
-      }
-
-      .slide.book-page[data-slide-index="2"][data-feed-type="minion"] {
-        --feast-accent: rgba(10, 10, 10, 0.18);
-      }
-
-      .slide.book-page[data-slide-index="2"][data-feed-type="monster"] {
-        --feast-accent: rgba(10, 10, 10, 0.26);
-      }
-
-      .slide.book-page[data-slide-index="2"][data-feed-type="champion"] {
-        --feast-accent: rgba(10, 10, 10, 0.36);
-      }
-
-      .slide.book-page[data-slide-index="2"] .feast-grow-blob {
-        background: var(--feast-accent);
-        border-color: var(--feast-accent);
-      }
-
-      .slide.book-page[data-slide-index="2"][data-feed-type="champion"] .feast-tier.is-unlocked {
-        border-color: var(--black);
-      }
-
       .feast-rank-hint {
         font-size: 0.75rem;
         color: var(--gray-500);
@@ -1563,20 +1481,6 @@
                   </div>
                 </div>
                 <div class="feast-right-foot">
-                  <div class="feed-type-carousel" id="feastFeedTypeCarousel" aria-label="Feed type carousel">
-                    <button type="button" class="feed-type is-active" data-feed-type="minion" aria-pressed="true">
-                      <span class="thumb" aria-hidden="true"></span>
-                      <span class="lbl">Minions</span>
-                    </button>
-                    <button type="button" class="feed-type" data-feed-type="monster" aria-pressed="false">
-                      <span class="thumb" aria-hidden="true"></span>
-                      <span class="lbl">Monsters</span>
-                    </button>
-                    <button type="button" class="feed-type" data-feed-type="champion" aria-pressed="false">
-                      <span class="thumb" aria-hidden="true"></span>
-                      <span class="lbl">Champions</span>
-                    </button>
-                  </div>
                   <div class="feast-ladder" id="feastLadder" aria-label="Reward ladder">
                     <div class="feast-tier" data-tier="0" data-need="1">
                       <div class="need">1 invite</div>
@@ -2127,7 +2031,6 @@
           var ladder = feastSlide.querySelector("#feastLadder");
           var growBlob = feastSlide.querySelector("#feastGrowBlob");
           var growLabel = feastSlide.querySelector("#feastGrowLabel");
-          var feedTypeCarousel = feastSlide.querySelector("#feastFeedTypeCarousel");
           var milestoneLabel = feastSlide.querySelector("#feastMilestoneLabel");
           var milestoneCount = feastSlide.querySelector("#feastMilestoneCount");
           var progressWrap = feastSlide.querySelector(".feast-progress");
@@ -2245,25 +2148,6 @@
               }
             }
 
-          function setFeedType(type) {
-            var t = type || "minion";
-            feastSlide.setAttribute("data-feed-type", t);
-            if (!feedTypeCarousel) return;
-            Array.from(feedTypeCarousel.querySelectorAll(".feed-type")).forEach(function (btn) {
-              var on = btn.getAttribute("data-feed-type") === t;
-              btn.classList.toggle("is-active", on);
-              btn.setAttribute("aria-pressed", on ? "true" : "false");
-            });
-          }
-
-          if (feedTypeCarousel) {
-            feedTypeCarousel.addEventListener("click", function (e) {
-              var btn = e.target.closest("button.feed-type");
-              if (!btn) return;
-              setFeedType(btn.getAttribute("data-feed-type"));
-            });
-          }
-
           if (btnFeastAddInvite) {
             btnFeastAddInvite.addEventListener("click", function () {
               feastInvites += 1;
@@ -2272,7 +2156,6 @@
           }
 
           syncFeast();
-          setFeedType("minion");
         }
 
       })();
