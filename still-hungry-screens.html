@@ -1967,11 +1967,10 @@
         });
 
         document.getElementById("btnEpilogueInvite").addEventListener("click", function () {
-          if (isSignedIn) {
-            openPopup(popupShareCard);
-          } else {
-            openNeedSignInPopup();
-          }
+          // Epilogue CTA: jump to Chapter 4 (slide index 3).
+          closePopups();
+          index = 3;
+          renderImmediate();
         });
 
         var btnFeastInvite = document.getElementById("btnFeastInvite");
