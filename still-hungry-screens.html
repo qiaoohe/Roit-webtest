@@ -548,6 +548,7 @@
       }
 
       .storybook-chapter-viewport {
+        position: relative;
         width: 100%;
         overflow: hidden;
         min-width: 0;
@@ -558,35 +559,31 @@
         background: rgba(255, 255, 255, 0.22);
       }
 
-      .storybook-chapter-track {
-        --storybook-index: 0;
-        --storybook-chapters: 3;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        width: calc(100% * var(--storybook-chapters));
-        height: 100%;
-        transform: translateX(calc(var(--storybook-index) * -100% / var(--storybook-chapters)));
-        transition: transform 0.36s cubic-bezier(0.25, 0.1, 0.25, 1);
-        will-change: transform;
-      }
-
-      .storybook-chapter-slide {
-        flex: 0 0 100%;
+      .storybook-chapter-panel {
+        position: absolute;
+        inset: 0;
         width: 100%;
+        height: 100%;
         min-width: 0;
         box-sizing: border-box;
         padding: 14px 14px 12px;
         display: grid;
         grid-template-rows: auto minmax(0, 1fr);
         gap: 8px;
-        height: 100%;
         min-height: 0;
         overflow: hidden;
         align-content: stretch;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
       }
 
-      .storybook-chapter-slide .body-sans {
+      .storybook-chapter-panel.is-active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .storybook-chapter-panel .body-sans {
         margin: 0;
         font-size: 0.84rem;
         line-height: 1.52;
@@ -621,7 +618,7 @@
         margin-top: 0;
       }
 
-      .storybook-chapter-slide .img-placeholder--story {
+      .storybook-chapter-panel .img-placeholder--story {
         flex: 1 1 0;
         min-height: 0;
         width: 100%;
@@ -629,12 +626,12 @@
         border-radius: var(--radius-md);
       }
 
-      .storybook-chapter-slide .img-placeholder--story::after {
+      .storybook-chapter-panel .img-placeholder--story::after {
         width: min(38%, 60px);
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .storybook-chapter-track {
+        .storybook-chapter-panel {
           transition: none;
         }
       }
@@ -1560,57 +1557,55 @@
                     </button>
                   </div>
                   <div class="storybook-chapter-viewport" id="storybookChapterViewport">
-                    <div class="storybook-chapter-track" id="storybookChapterTrack">
-                      <section
-                        class="storybook-chapter-slide"
-                        id="sb-carousel-slide-0"
-                        role="tabpanel"
-                        aria-labelledby="sb-tab-0"
-                        aria-hidden="false"
-                      >
-                        <p class="body-sans">
-                          Chapter 1 — Nights lit by monitors: glow on your face, worn keys, five-stack laughter rolling across the desk. Forget rank for a minute;
-                          remember how it felt. Tap play when your clip lives here.
-                        </p>
-                        <div class="storybook-chapter-slide-visual">
-                          <div class="storybook-visual-play">
-                            <button type="button" class="play-fab" aria-label="Play chapter clip">
-                              <span class="play-fab-glyph" aria-hidden="true">▶</span>
-                            </button>
-                          </div>
+                    <section
+                      class="storybook-chapter-panel is-active"
+                      id="sb-carousel-slide-0"
+                      role="tabpanel"
+                      aria-labelledby="sb-tab-0"
+                      aria-hidden="false"
+                    >
+                      <p class="body-sans">
+                        Chapter 1 — Nights lit by monitors: glow on your face, worn keys, five-stack laughter rolling across the desk. Forget rank for a minute;
+                        remember how it felt. Tap play when your clip lives here.
+                      </p>
+                      <div class="storybook-chapter-slide-visual">
+                        <div class="storybook-visual-play">
+                          <button type="button" class="play-fab" aria-label="Play chapter clip">
+                            <span class="play-fab-glyph" aria-hidden="true">▶</span>
+                          </button>
                         </div>
-                      </section>
-                      <section
-                        class="storybook-chapter-slide"
-                        id="sb-carousel-slide-1"
-                        role="tabpanel"
-                        aria-labelledby="sb-tab-1"
-                        aria-hidden="true"
-                      >
-                        <p class="body-sans">
-                          Chapter 2 — Patch nights that dragged until dawn: stale pizza, reruns of old Worlds clips, and the quiet ping when everyone finally came
-                          back online. Swap this block for stills or concept frames.
-                        </p>
-                        <div class="storybook-chapter-slide-visual">
-                          <div class="img-placeholder img-placeholder--story" role="img" aria-label="Chapter 2 image placeholder"></div>
-                        </div>
-                      </section>
-                      <section
-                        class="storybook-chapter-slide"
-                        id="sb-carousel-slide-2"
-                        role="tabpanel"
-                        aria-labelledby="sb-tab-2"
-                        aria-hidden="true"
-                      >
-                        <p class="body-sans">
-                          Chapter 3 — The roster grayed out but the memories didn’t: dodgy cafes, borrowed headsets, one bar of LTE clamped between thumb and
-                          palm. Drop hero art or mood boards into the slot below.
-                        </p>
-                        <div class="storybook-chapter-slide-visual">
-                          <div class="img-placeholder img-placeholder--story" role="img" aria-label="Chapter 3 image placeholder"></div>
-                        </div>
-                      </section>
-                    </div>
+                      </div>
+                    </section>
+                    <section
+                      class="storybook-chapter-panel"
+                      id="sb-carousel-slide-1"
+                      role="tabpanel"
+                      aria-labelledby="sb-tab-1"
+                      aria-hidden="true"
+                    >
+                      <p class="body-sans">
+                        Chapter 2 — Patch nights that dragged until dawn: stale pizza, reruns of old Worlds clips, and the quiet ping when everyone finally came
+                        back online. Swap this block for stills or concept frames.
+                      </p>
+                      <div class="storybook-chapter-slide-visual">
+                        <div class="img-placeholder img-placeholder--story" role="img" aria-label="Chapter 2 image placeholder"></div>
+                      </div>
+                    </section>
+                    <section
+                      class="storybook-chapter-panel"
+                      id="sb-carousel-slide-2"
+                      role="tabpanel"
+                      aria-labelledby="sb-tab-2"
+                      aria-hidden="true"
+                    >
+                      <p class="body-sans">
+                        Chapter 3 — The roster grayed out but the memories didn’t: dodgy cafes, borrowed headsets, one bar of LTE clamped between thumb and
+                        palm. Drop hero art or mood boards into the slot below.
+                      </p>
+                      <div class="storybook-chapter-slide-visual">
+                        <div class="img-placeholder img-placeholder--story" role="img" aria-label="Chapter 3 image placeholder"></div>
+                      </div>
+                    </section>
                   </div>
                 </div>
               </div>
@@ -2179,15 +2174,14 @@
 
         (function initStorybookChapterCarousel() {
           var root = document.getElementById("storybookChapterRoot");
-          var track = document.getElementById("storybookChapterTrack");
-          if (!root || !track) return;
+          var viewport = document.getElementById("storybookChapterViewport");
+          if (!root || !viewport) return;
           var tablist = root.querySelector('[role="tablist"]');
           var tabs = Array.from(root.querySelectorAll(".chapter-tabs [role='tab']"));
-          var slidePanels = Array.from(track.querySelectorAll(".storybook-chapter-slide"));
+          var slidePanels = Array.from(viewport.querySelectorAll("[role='tabpanel']"));
 
           function activateChapter(i) {
             var idx = Math.max(0, Math.min(tabs.length - 1, i));
-            track.style.setProperty("--storybook-index", String(idx));
             tabs.forEach(function (t, j) {
               var on = j === idx;
               t.classList.toggle("is-active", on);
@@ -2196,6 +2190,7 @@
             });
             slidePanels.forEach(function (p, j) {
               p.setAttribute("aria-hidden", j === idx ? "false" : "true");
+              p.classList.toggle("is-active", j === idx);
             });
             root.setAttribute("data-chapter", String(idx + 1));
           }
