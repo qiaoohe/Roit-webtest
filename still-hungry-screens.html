@@ -566,7 +566,7 @@
         flex-wrap: nowrap;
         width: calc(100% * var(--storybook-chapters));
         height: 100%;
-        transform: translateX(calc(var(--storybook-index) * -100%));
+        transform: translateX(calc(var(--storybook-index) * -100% / var(--storybook-chapters)));
         transition: transform 0.36s cubic-bezier(0.25, 0.1, 0.25, 1);
         will-change: transform;
       }
