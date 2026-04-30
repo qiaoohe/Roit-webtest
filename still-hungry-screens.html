@@ -1174,55 +1174,6 @@
         margin-bottom: 18px;
       }
 
-      .invite-status-list {
-        display: grid;
-        gap: 10px;
-        margin: 0 0 18px;
-        padding: 0;
-        list-style: none;
-      }
-
-      .invite-status-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 12px 14px;
-        border: 1px solid var(--gray-250);
-        border-radius: 12px;
-        background: var(--white);
-      }
-
-      .invite-status-row .who {
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: var(--black);
-      }
-
-      .invite-status-row .meta {
-        font-size: 0.72rem;
-        color: var(--gray-400);
-        margin-top: 2px;
-      }
-
-      .status-pill {
-        flex-shrink: 0;
-        font-size: 0.72rem;
-        font-weight: 600;
-        padding: 8px 10px;
-        border-radius: 999px;
-        border: 1px solid var(--gray-250);
-        background: var(--gray-100);
-        color: var(--gray-600);
-        letter-spacing: 0.02em;
-      }
-
-      .status-pill.is-complete {
-        background: var(--black);
-        color: var(--white);
-        border-color: var(--black);
-      }
-
       .social-row {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -1561,14 +1512,8 @@
                       <div class="state">Locked</div>
                     </div>
                   </div>
-                  <p class="feast-rank-hint" id="feastRankHint">You are #184 — 2 invites away from #160</p>
-                  <p class="feast-status">
-                    At <span id="feastInviteCountInline">1</span> successful invites, you unlock: <span id="feastRewardName">Dual-login bundle</span>
-                  </p>
                   <div class="feast-actions" aria-label="Invite actions">
-                    <button type="button" class="btn-pill sm" id="btnFeastInvite">Invite friends</button>
-                    <button type="button" class="btn-pill sm secondary" id="btnFeastCopy">Copy link</button>
-                    <button type="button" class="btn-pill sm secondary" id="btnFeastViewStatus">View status</button>
+                    <button type="button" class="btn-pill sm" id="btnFeastInvite">喂养科加斯</button>
                   </div>
                   <div class="feast-milestone" aria-label="Milestone progress">
                     <div class="feast-milestone-head">
@@ -1757,44 +1702,6 @@
       </div>
     </div>
 
-    <!-- Invite status (pitch) -->
-    <div class="popup-layer" id="popupInviteStatus" hidden role="dialog" aria-modal="true" aria-labelledby="popupInviteStatusTitle">
-      <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
-      <div class="popup-dialog modal-slide">
-        <div class="modal-head">
-          <h2 id="popupInviteStatusTitle">Invite status</h2>
-          <button type="button" class="modal-close popup-close" aria-label="Close">×</button>
-        </div>
-        <p class="gate-body" style="margin-bottom: 14px">
-          Successful invite = a friend signs up or logs in via your link. Track who opened, and who completed.
-        </p>
-        <ul class="invite-status-list" aria-label="Invite funnel examples">
-          <li class="invite-status-row">
-            <div>
-              <div class="who">Avery</div>
-              <div class="meta">Opened · 2h ago</div>
-            </div>
-            <span class="status-pill">Opened</span>
-          </li>
-          <li class="invite-status-row">
-            <div>
-              <div class="who">Mina</div>
-              <div class="meta">Completed · +1 feed</div>
-            </div>
-            <span class="status-pill is-complete">Completed</span>
-          </li>
-          <li class="invite-status-row">
-            <div>
-              <div class="who">Jules</div>
-              <div class="meta">Sent · waiting</div>
-            </div>
-            <span class="status-pill">Sent</span>
-          </li>
-        </ul>
-        <button type="button" class="btn-pill block" id="btnInviteStatusPrimary">Invite more friends</button>
-      </div>
-    </div>
-
     <!-- Sign-in required -->
     <div class="popup-layer" id="popupNeedSignIn" hidden role="dialog" aria-modal="true" aria-labelledby="gateTitle">
       <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
@@ -1860,7 +1767,6 @@
 
         const popupShareLink = document.getElementById("popupShareLink");
         const popupShareCard = document.getElementById("popupShareCard");
-        const popupInviteStatus = document.getElementById("popupInviteStatus");
         const popupNeedSignIn = document.getElementById("popupNeedSignIn");
         var guestPanel = document.getElementById("chogathGuestPanel");
         var unlockedPanel = document.getElementById("chogathUnlockedPanel");
@@ -1869,7 +1775,6 @@
         function closePopups() {
           popupShareLink.hidden = true;
           popupShareCard.hidden = true;
-          if (popupInviteStatus) popupInviteStatus.hidden = true;
           popupNeedSignIn.hidden = true;
           document.body.classList.remove("popup-open");
         }
@@ -1916,10 +1821,6 @@
         });
 
         var btnFeastInvite = document.getElementById("btnFeastInvite");
-        var btnFeastCopy = document.getElementById("btnFeastCopy");
-        var btnFeastViewStatus = document.getElementById("btnFeastViewStatus");
-        var btnFeastRule = document.getElementById("btnFeastRule");
-        var btnInviteStatusPrimary = document.getElementById("btnInviteStatusPrimary");
 
         function openInviteFlow() {
           if (isSignedIn) openPopup(popupShareLink);
@@ -1927,16 +1828,6 @@
         }
 
         if (btnFeastInvite) btnFeastInvite.addEventListener("click", openInviteFlow);
-        if (btnFeastCopy) btnFeastCopy.addEventListener("click", openInviteFlow);
-        if (btnInviteStatusPrimary) btnInviteStatusPrimary.addEventListener("click", openInviteFlow);
-        if (btnFeastViewStatus && popupInviteStatus)
-          btnFeastViewStatus.addEventListener("click", function () {
-            openPopup(popupInviteStatus);
-          });
-        if (btnFeastRule && popupInviteStatus)
-          btnFeastRule.addEventListener("click", function () {
-            openPopup(popupInviteStatus);
-          });
 
         document.getElementById("btnOpenShareLinkModal").addEventListener("click", function () {
           openPopup(popupShareLink);
