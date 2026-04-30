@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/still-hungry-screens.html" }
+  ]
+}
+
