@@ -1335,6 +1335,34 @@
         pointer-events: none;
       }
 
+      .toast-host {
+        position: fixed;
+        left: 50%;
+        bottom: calc(22px + var(--safe-bottom));
+        transform: translateX(-50%);
+        z-index: 80;
+        width: min(92vw, 420px);
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+      }
+
+      .toast-host[hidden] {
+        display: none !important;
+      }
+
+      .toast {
+        width: fit-content;
+        max-width: 100%;
+        padding: 12px 14px;
+        border-radius: 999px;
+        background: rgba(10, 10, 10, 0.92);
+        color: var(--white);
+        font-size: 0.82rem;
+        line-height: 1.25;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+      }
+
       .gate-body {
         margin: 0;
         font-size: 0.9rem;
@@ -1749,6 +1777,10 @@
       </nav>
     </div>
 
+    <div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true" hidden>
+      <div class="toast" id="toastMsg"></div>
+    </div>
+
     <!-- Sign-in required -->
     <div class="popup-layer" id="popupNeedSignIn" hidden role="dialog" aria-modal="true" aria-labelledby="gateTitle">
       <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
@@ -1844,6 +1876,44 @@
           if (unlockBtn) unlockBtn.focus();
         }
 
+        var toastHost = document.getElementById("toastHost");
+        var toastMsg = document.getElementById("toastMsg");
+        var toastTimer = null;
+
+        function showToast(msg) {
+          if (!toastHost || !toastMsg) return;
+          toastMsg.textContent = msg;
+          toastHost.hidden = false;
+          window.clearTimeout(toastTimer);
+          toastTimer = window.setTimeout(function () {
+            toastHost.hidden = true;
+          }, 1600);
+        }
+
+        function copyTextToClipboard(text) {
+          if (!text) return Promise.reject(new Error("empty"));
+          if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+            return navigator.clipboard.writeText(text);
+          }
+          return new Promise(function (resolve, reject) {
+            try {
+              var ta = document.createElement("textarea");
+              ta.value = text;
+              ta.setAttribute("readonly", "");
+              ta.style.position = "fixed";
+              ta.style.opacity = "0";
+              document.body.appendChild(ta);
+              ta.focus();
+              ta.select();
+              var ok = document.execCommand("copy");
+              document.body.removeChild(ta);
+              ok ? resolve() : reject(new Error("execCommand failed"));
+            } catch (e) {
+              reject(e);
+            }
+          });
+        }
+
         document.getElementById("btnGateDismiss").addEventListener("click", closePopups);
 
         document.getElementById("btnGateUnlock").addEventListener("click", function () {
@@ -1935,12 +2005,19 @@
         var btnPopupDownload = document.getElementById("btnPopupDownload");
         if (btnPopupDownload) {
           btnPopupDownload.addEventListener("click", function () {
-            closePopups();
+            showToast("海报已开始下载");
           });
         }
 
         document.getElementById("btnPopupCopyLink").addEventListener("click", function () {
-          closePopups();
+          var url = getInviteUrl();
+          copyTextToClipboard(url)
+            .then(function () {
+              showToast("链接已复制");
+            })
+            .catch(function () {
+              showToast("复制失败，请手动复制");
+            });
         });
 
         function getInviteUrl() {
