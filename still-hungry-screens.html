@@ -722,26 +722,6 @@
         margin: 0 0 8px;
       }
 
-      .feast-rule {
-        text-align: center;
-        font-size: 0.72rem;
-        color: var(--gray-500);
-        line-height: 1.35;
-        margin: 0 0 10px;
-      }
-
-      .feast-rule button {
-        appearance: none;
-        border: 0;
-        background: transparent;
-        padding: 0;
-        margin: 0;
-        color: inherit;
-        text-decoration: underline;
-        cursor: pointer;
-        font: inherit;
-      }
-
       .feast-metrics {
         display: grid;
         gap: 6px;
@@ -1590,17 +1570,11 @@
               <div class="col col-mid feast-right-col">
                 <div class="feast-right-head">
                   <h3 class="feast-right-title">Feed Cho'Gath</h3>
-                  <p class="feast-desc-dup">Every successful invite is one bite.</p>
-                  <p class="feast-rule">
-                    <button type="button" id="btnFeastRule" aria-label="What counts as a successful invite?">What counts as successful?</button>
-                    A successful invite counts when a friend signs up or logs in via your link.
-                  </p>
-                  <p class="feast-lock-status feast-lock-status--locked" id="feastLockStatus" aria-live="polite">Locked</p>
+                  <p class="feast-desc-dup">成功邀请一次，就是投喂一口。</p>
                 </div>
                 <div class="feast-round-slot">
                   <div class="feast-grow" role="img" aria-label="Cho'Gath growth preview">
                     <div class="feast-grow-blob" id="feastGrowBlob" aria-hidden="true"></div>
-                    <div class="feast-grow-label" id="feastGrowLabel">Size Lv. 1</div>
                   </div>
                 </div>
                 <div class="feast-right-foot">
@@ -2214,14 +2188,12 @@
           var rewardName = feastSlide.querySelector("#feastRewardName");
           var ladder = feastSlide.querySelector("#feastLadder");
           var growBlob = feastSlide.querySelector("#feastGrowBlob");
-          var growLabel = feastSlide.querySelector("#feastGrowLabel");
           var btnFeastInvite = feastSlide.querySelector("#btnFeastInvite");
           var milestoneLabel = feastSlide.querySelector("#feastMilestoneLabel");
           var milestoneCount = feastSlide.querySelector("#feastMilestoneCount");
           var progressWrap = feastSlide.querySelector(".feast-progress");
           var progressFill = feastSlide.querySelector("#feastProgressFill");
           var btnFeastAddInvite = feastSlide.querySelector("#btnFeastAddInvite");
-          var feastLockStatus = feastSlide.querySelector("#feastLockStatus");
 
           var feastInvites = 1;
           var milestones = [1, 3, 5, 8, 10];
@@ -2253,12 +2225,6 @@
 
               var curMi = milestones[curIdx] || 1;
               var nextMi = curIdx + 1 < milestones.length ? milestones[curIdx + 1] : null;
-              if (feastLockStatus) {
-                var unlocked = n >= 5;
-                feastLockStatus.textContent = unlocked ? "Unlocked" : "Locked";
-                feastLockStatus.classList.toggle("feast-lock-status--unlocked", unlocked);
-                feastLockStatus.classList.toggle("feast-lock-status--locked", !unlocked);
-              }
 
               if (milestoneLabel && milestoneCount) {
                 if (hasMaxReward) {
@@ -2322,14 +2288,6 @@
                 var endless = hasMaxReward ? Math.min(0.55, extra * 0.02) : 0;
                 var scale = clamp(base + endless, 0.9, 1.8);
                 growBlob.style.transform = "scale(" + scale.toFixed(3) + ")";
-              }
-              if (growLabel) {
-                if (hasMaxReward) {
-                  var sizeRank2 = Math.floor(extra / 5) + 1;
-                  growLabel.textContent = "Endless · Size Rank " + sizeRank2;
-                } else {
-                  growLabel.textContent = "Size Lv. " + String(curIdx + 1);
-                }
               }
             }
 
