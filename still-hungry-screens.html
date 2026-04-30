@@ -1627,7 +1627,7 @@
               <div class="col col-mid feast-right-col">
                 <div class="feast-right-head">
                   <h3 class="feast-right-title">Feed Cho'Gath</h3>
-                  <p class="feast-desc-dup">成功邀请一次，就是投喂一口。</p>
+                  <p class="feast-desc-dup">Each successful invite is one bite.</p>
                 </div>
                 <div class="feast-round-slot">
                   <div class="feast-grow" role="img" aria-label="Cho'Gath growth preview">
@@ -1668,8 +1668,8 @@
                     </div>
                   </div>
                   <div class="feast-actions" aria-label="Invite actions">
-                    <button type="button" class="btn-pill sm" id="btnFeastInvite">喂养科加斯</button>
-                    <button type="button" class="btn-pill sm secondary" id="btnFeastAddInvite">测试用</button>
+                    <button type="button" class="btn-pill sm" id="btnFeastInvite">Feed Cho'Gath</button>
+                    <button type="button" class="btn-pill sm secondary" id="btnFeastAddInvite">Test</button>
                   </div>
                   <div class="feast-milestone" aria-label="Milestone progress">
                     <div class="feast-milestone-head">
@@ -1699,9 +1699,9 @@
                   <button type="button" class="ch4-nav prev" id="ch4Prev" aria-label="Previous">‹</button>
                   <button type="button" class="ch4-nav next" id="ch4Next" aria-label="Next">›</button>
                 </div>
-                <div class="ch4-type" id="ch4Type">英雄</div>
+                <div class="ch4-type" id="ch4Type">Hero</div>
                 <div class="ch4-cta">
-                  <button type="button" class="btn-pill" id="btnCh4Feed">开始投喂</button>
+                  <button type="button" class="btn-pill" id="btnCh4Feed">Start feeding</button>
                 </div>
               </div>
             </div>
@@ -2006,9 +2006,9 @@
           if (!left || !typeEl || !prev || !next) return;
 
           var items = [
-            { key: "hero", label: "英雄" },
-            { key: "monster", label: "野怪" },
-            { key: "minion", label: "小兵" },
+            { key: "hero", label: "Hero" },
+            { key: "monster", label: "Monster" },
+            { key: "minion", label: "Minion" },
           ];
           var i = 0;
 
@@ -2049,7 +2049,7 @@
         var btnPopupDownload = document.getElementById("btnPopupDownload");
         if (btnPopupDownload) {
           btnPopupDownload.addEventListener("click", function () {
-            showToast("海报已开始下载");
+            showToast("Download started");
           });
         }
 
@@ -2057,10 +2057,10 @@
           var url = getInviteUrl();
           copyTextToClipboard(url)
             .then(function () {
-              showToast("链接已复制");
+              showToast("Link copied");
             })
             .catch(function () {
-              showToast("复制失败，请手动复制");
+              showToast("Copy failed — please copy manually");
             });
         });
 
