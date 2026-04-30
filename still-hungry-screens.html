@@ -330,6 +330,29 @@
         display: flex;
         align-items: stretch;
         justify-content: center;
+        transform-origin: 50% 70%;
+        animation: launchIntro 860ms cubic-bezier(0.2, 0.9, 0.2, 1) 120ms both;
+      }
+
+      @keyframes launchIntro {
+        0% {
+          transform: translateY(6px) scale(0.985);
+          box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+        }
+        55% {
+          transform: translateY(-2px) scale(1.005);
+          box-shadow: 0 18px 48px rgba(0, 0, 0, 0.09);
+        }
+        100% {
+          transform: translateY(0) scale(1);
+          box-shadow: 0 14px 44px rgba(0, 0, 0, 0.08);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .launch-shell {
+          animation: none;
+        }
       }
 
       .launch-spine {
