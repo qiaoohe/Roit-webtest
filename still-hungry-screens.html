@@ -2215,6 +2215,7 @@
           var ladder = feastSlide.querySelector("#feastLadder");
           var growBlob = feastSlide.querySelector("#feastGrowBlob");
           var growLabel = feastSlide.querySelector("#feastGrowLabel");
+          var btnFeastInvite = feastSlide.querySelector("#btnFeastInvite");
           var milestoneLabel = feastSlide.querySelector("#feastMilestoneLabel");
           var milestoneCount = feastSlide.querySelector("#feastMilestoneCount");
           var progressWrap = feastSlide.querySelector(".feast-progress");
@@ -2336,6 +2337,17 @@
             btnFeastAddInvite.addEventListener("click", function () {
               feastInvites += 1;
               syncFeast();
+            });
+          }
+
+          if (btnFeastInvite) {
+            btnFeastInvite.addEventListener("click", function () {
+              // Third screen CTA: jump to Chapter 4 (slide index 3).
+              if (index === 2) go(1);
+              else {
+                index = 3;
+                renderImmediate();
+              }
             });
           }
 
