@@ -198,6 +198,90 @@
         display: none !important;
       }
 
+      /* —— Chapter 4 (Cho'Gath) themed carousel —— */
+      .ch4-left {
+        background: var(--gray-100);
+        position: relative;
+      }
+
+      .ch4-left[data-theme="hero"] {
+        background: radial-gradient(circle at 20% 20%, rgba(10, 10, 10, 0.06), transparent 55%), var(--gray-100);
+      }
+
+      .ch4-left[data-theme="monster"] {
+        background: radial-gradient(circle at 70% 25%, rgba(10, 10, 10, 0.08), transparent 60%), var(--gray-100);
+      }
+
+      .ch4-left[data-theme="minion"] {
+        background: radial-gradient(circle at 35% 35%, rgba(10, 10, 10, 0.04), transparent 58%), var(--gray-100);
+      }
+
+      .ch4-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+      }
+
+      .ch4-wheel {
+        position: relative;
+        width: min(260px, 60vw);
+        height: min(260px, 60vw);
+        border-radius: 50%;
+        border: 2px solid rgba(10, 10, 10, 0.85);
+        display: grid;
+        place-items: center;
+        background: transparent;
+      }
+
+      .ch4-wheel::before {
+        content: "";
+        width: 86%;
+        height: 86%;
+        border-radius: 50%;
+        background: rgba(10, 10, 10, 0.12);
+        border: 1px solid rgba(10, 10, 10, 0.06);
+        box-shadow: inset 0 0 0 12px rgba(255, 255, 255, 0.55);
+      }
+
+      .ch4-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        border: none;
+        background: transparent;
+        color: rgba(10, 10, 10, 0.6);
+        cursor: pointer;
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      .ch4-nav:hover {
+        color: rgba(10, 10, 10, 0.9);
+      }
+
+      .ch4-nav.prev {
+        left: -54px;
+      }
+
+      .ch4-nav.next {
+        right: -54px;
+      }
+
+      .ch4-type {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: rgba(10, 10, 10, 0.75);
+      }
+
+      .ch4-cta {
+        margin-top: 6px;
+      }
+
       .chogath-panel.unlocked-stack {
         justify-content: stretch;
         gap: 16px;
@@ -1531,33 +1615,20 @@
           <!-- 4 Cho'Gath Card (composed states + popups) -->
           <div class="slide book-page" data-slide-index="3" role="group" aria-label="Cho'Gath Card">
             <div class="wide-card">
-              <div class="col col-light chogath-left-col">
-                <p class="eyebrow-serif">Cho'Gath Card</p>
-                <h2 class="headline-serif">Send a card to a friend you've lost touch with.</h2>
-                <div class="chogath-left-media">
-                  <div class="img-placeholder img-placeholder--chogath-left" role="img" aria-label="Image placeholder"></div>
-                </div>
-                <p class="body-sans bottom">
-                  Write one honest line and generate a card worth sending — carry the feast from here to their chat. Sign in to copy your invite link.
-                </p>
+              <div class="col col-light ch4-left" id="ch4Left" data-theme="hero">
+                <p class="eyebrow-serif">A greeting from the feast</p>
+                <h2 class="headline-serif">YOUR NAME SAVED YOU A SEAT.</h2>
+                <div class="img-placeholder img-placeholder--banner" role="img" aria-label="Image placeholder"></div>
+                <p class="body-sans bottom">The table is set on Wild Rift. Tap the link. Cho'Gath has been waiting.</p>
               </div>
-              <div class="col col-mid chogath-right">
-                <div id="chogathGuestPanel" class="chogath-panel">
-                  <div class="chogath-preview-slot">
-                    <div class="img-placeholder img-placeholder--card" role="img" aria-label="Image placeholder"></div>
-                  </div>
-                  <button type="button" class="btn-pill" id="btnChogathLogin">Sign in</button>
+              <div class="col col-mid ch4-right" id="ch4Right">
+                <div class="ch4-wheel" id="ch4Wheel" aria-label="Feed selection">
+                  <button type="button" class="ch4-nav prev" id="ch4Prev" aria-label="Previous">‹</button>
+                  <button type="button" class="ch4-nav next" id="ch4Next" aria-label="Next">›</button>
                 </div>
-                <div id="chogathUnlockedPanel" class="chogath-panel unlocked-stack is-hidden">
-                  <div class="inner-card">
-                    <p class="small-serif">A greeting from the feast</p>
-                    <p class="big-serif">Thelma saved you a seat.</p>
-                    <p class="tiny">The table is set on Wild Rift. Tap the link. Cho'Gath has been waiting.</p>
-                  </div>
-                  <div class="btn-row">
-                    <button type="button" class="btn-pill sm" id="btnOpenShareCardModal">Download Card</button>
-                    <button type="button" class="btn-pill sm secondary" id="btnOpenShareLinkModal">Share Link</button>
-                  </div>
+                <div class="ch4-type" id="ch4Type">英雄</div>
+                <div class="ch4-cta">
+                  <button type="button" class="btn-pill" id="btnCh4Feed">喂养科加斯</button>
                 </div>
               </div>
             </div>
@@ -1764,8 +1835,6 @@
         const popupShareLink = document.getElementById("popupShareLink");
         const popupShareCard = document.getElementById("popupShareCard");
         const popupNeedSignIn = document.getElementById("popupNeedSignIn");
-        var guestPanel = document.getElementById("chogathGuestPanel");
-        var unlockedPanel = document.getElementById("chogathUnlockedPanel");
         var isSignedIn = false;
 
         function closePopups() {
@@ -1791,21 +1860,11 @@
           if (unlockBtn) unlockBtn.focus();
         }
 
-        function unlockChogathPanels() {
-          guestPanel.classList.add("is-hidden");
-          unlockedPanel.classList.remove("is-hidden");
-        }
-
-        document.getElementById("btnChogathLogin").addEventListener("click", function () {
-          openNeedSignInPopup();
-        });
-
         document.getElementById("btnGateDismiss").addEventListener("click", closePopups);
 
         document.getElementById("btnGateUnlock").addEventListener("click", function () {
           isSignedIn = true;
           closePopups();
-          unlockChogathPanels();
         });
 
         document.getElementById("btnEpilogueInvite").addEventListener("click", function () {
@@ -1826,13 +1885,61 @@
           });
         }
 
-        document.getElementById("btnOpenShareLinkModal").addEventListener("click", function () {
-          openPopup(popupShareLink);
-        });
+        var btnOpenShareLinkModal = document.getElementById("btnOpenShareLinkModal");
+        if (btnOpenShareLinkModal) {
+          btnOpenShareLinkModal.addEventListener("click", function () {
+            openPopup(popupShareLink);
+          });
+        }
 
-        document.getElementById("btnOpenShareCardModal").addEventListener("click", function () {
-          openPopup(popupShareCard);
-        });
+        var btnOpenShareCardModal = document.getElementById("btnOpenShareCardModal");
+        if (btnOpenShareCardModal) {
+          btnOpenShareCardModal.addEventListener("click", function () {
+            openPopup(popupShareCard);
+          });
+        }
+
+        (function initChapter4FeedCarousel() {
+          var left = document.getElementById("ch4Left");
+          var typeEl = document.getElementById("ch4Type");
+          var prev = document.getElementById("ch4Prev");
+          var next = document.getElementById("ch4Next");
+          var feedBtn = document.getElementById("btnCh4Feed");
+          if (!left || !typeEl || !prev || !next) return;
+
+          var items = [
+            { key: "hero", label: "英雄" },
+            { key: "monster", label: "野怪" },
+            { key: "minion", label: "小兵" },
+          ];
+          var i = 0;
+
+          function apply() {
+            var it = items[i];
+            left.setAttribute("data-theme", it.key);
+            typeEl.textContent = it.label;
+          }
+
+          function step(delta) {
+            i = (i + delta + items.length) % items.length;
+            apply();
+          }
+
+          prev.addEventListener("click", function () {
+            step(-1);
+          });
+          next.addEventListener("click", function () {
+            step(1);
+          });
+          if (feedBtn) {
+            feedBtn.addEventListener("click", function () {
+              // Pitch: feed leads to next screen.
+              if (index === 3) go(1);
+              else index = 4;
+            });
+          }
+          apply();
+        })();
 
         document.querySelectorAll(".popup-layer .popup-backdrop").forEach(function (btn) {
           btn.addEventListener("click", closePopups);
