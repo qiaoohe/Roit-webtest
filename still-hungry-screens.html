@@ -627,6 +627,196 @@
         margin: 0 0 8px;
       }
 
+      .feast-rule {
+        text-align: center;
+        font-size: 0.72rem;
+        color: var(--gray-500);
+        line-height: 1.35;
+        margin: 0 0 10px;
+      }
+
+      .feast-rule button {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        color: inherit;
+        text-decoration: underline;
+        cursor: pointer;
+        font: inherit;
+      }
+
+      .feast-metrics {
+        display: grid;
+        gap: 6px;
+        margin: 6px 0 10px;
+        text-align: center;
+      }
+
+      .feast-metrics .kpi {
+        font-family: var(--sans);
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: 0.02em;
+        color: var(--black);
+      }
+
+      .feast-metrics .subkpi {
+        font-size: 0.78rem;
+        color: var(--gray-500);
+      }
+
+      .feast-rank-hint {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+        text-align: center;
+        margin: 0 0 12px;
+      }
+
+      .feast-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 12px 0 12px;
+      }
+
+      .feast-milestone {
+        margin-top: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .feast-milestone-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 0.72rem;
+        color: var(--gray-500);
+      }
+
+      .feast-progress {
+        width: 100%;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--gray-200);
+        border: 1px solid var(--gray-250);
+        overflow: hidden;
+      }
+
+      .feast-progress > span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: var(--black);
+      }
+
+      .feast-demo-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+
+      .feast-ladder {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+        margin: 10px 0 14px;
+      }
+
+      .feast-tier {
+        border: 1px solid var(--gray-250);
+        background: rgba(255, 255, 255, 0.65);
+        border-radius: 12px;
+        padding: 10px 8px 9px;
+        text-align: center;
+        min-width: 0;
+      }
+
+      .feast-tier .need {
+        font-size: 0.7rem;
+        color: var(--gray-500);
+      }
+
+      .feast-tier .name {
+        margin-top: 6px;
+        font-size: 0.7rem;
+        color: var(--gray-600);
+        line-height: 1.25;
+      }
+
+      .feast-tier .state {
+        margin-top: 8px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--gray-400);
+      }
+
+      .feast-tier.is-unlocked {
+        border-color: var(--black);
+        background: var(--white);
+      }
+
+      .feast-tier.is-unlocked .state {
+        color: var(--black);
+      }
+
+      .feast-tier.is-next {
+        border-color: var(--gray-400);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(235, 235, 235, 0.55));
+      }
+
+      .feast-tier.is-next .state {
+        color: var(--gray-600);
+      }
+
+      .feast-grow {
+        position: relative;
+        width: min(220px, 55vw);
+        height: min(220px, 55vw);
+        border-radius: 50%;
+        margin: 0;
+        flex-shrink: 0;
+        border: 1px solid var(--gray-250);
+        background: radial-gradient(circle at 30% 30%, #f7f7f7, #e7e7e7);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+
+      .feast-grow-blob {
+        width: 86px;
+        height: 86px;
+        border-radius: 46% 54% 56% 44% / 44% 46% 54% 56%;
+        background: rgba(10, 10, 10, 0.18);
+        border: 1px solid rgba(10, 10, 10, 0.18);
+        transform: scale(1);
+        transition: transform 220ms ease;
+        will-change: transform;
+      }
+
+      .feast-grow-label {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.72rem;
+        color: var(--gray-600);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid var(--gray-250);
+        border-radius: 999px;
+        padding: 8px 10px;
+        white-space: nowrap;
+      }
+
       .feast-right-col {
         display: flex;
         flex-direction: column;
@@ -984,6 +1174,55 @@
         margin-bottom: 18px;
       }
 
+      .invite-status-list {
+        display: grid;
+        gap: 10px;
+        margin: 0 0 18px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .invite-status-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--gray-250);
+        border-radius: 12px;
+        background: var(--white);
+      }
+
+      .invite-status-row .who {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--black);
+      }
+
+      .invite-status-row .meta {
+        font-size: 0.72rem;
+        color: var(--gray-400);
+        margin-top: 2px;
+      }
+
+      .status-pill {
+        flex-shrink: 0;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--gray-250);
+        background: var(--gray-100);
+        color: var(--gray-600);
+        letter-spacing: 0.02em;
+      }
+
+      .status-pill.is-complete {
+        background: var(--black);
+        color: var(--white);
+        border-color: var(--black);
+      }
+
       .social-row {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -1267,27 +1506,81 @@
             <div class="wide-card">
               <div class="col col-light">
                 <p class="eyebrow-serif">The Feast · Table</p>
-                <h2 class="headline-serif">Every returning friend is another dish.</h2>
+                <h2 class="headline-serif">Every successful invite is one bite.</h2>
                 <div class="img-placeholder img-placeholder--wide" role="img" aria-label="Image placeholder"></div>
                 <p class="body-sans bottom">
-                  Every Summoner who steps back onto the Rift because of you pulls the feast forward — Cho'Gath grows with you. More returns, richer rewards.
-                  Drag the slider to preview your spread.
+                  Invite a friend back with your link. When they sign up or log in, Cho'Gath eats — and grows. More successful invites unlock richer rewards and
+                  push you up the global leaderboard.
                 </p>
               </div>
               <div class="col col-mid feast-right-col">
                 <div class="feast-right-head">
-                  <h3 class="feast-right-title">Dual-login bundle</h3>
-                  <p class="feast-desc-dup">Description Description</p>
+                  <h3 class="feast-right-title">Feed Cho'Gath</h3>
+                  <p class="feast-desc-dup">Every successful invite is one bite.</p>
+                  <p class="feast-rule">
+                    <button type="button" id="btnFeastRule" aria-label="What counts as a successful invite?">What counts as successful?</button>
+                    A successful invite counts when a friend signs up or logs in via your link.
+                  </p>
                   <p class="feast-lock-status feast-lock-status--locked" id="feastLockStatus" aria-live="polite">Locked</p>
                 </div>
                 <div class="feast-round-slot">
-                  <div class="img-placeholder img-placeholder--round" role="img" aria-label="Image placeholder"></div>
+                  <div class="feast-grow" role="img" aria-label="Cho'Gath growth preview">
+                    <div class="feast-grow-blob" id="feastGrowBlob" aria-hidden="true"></div>
+                    <div class="feast-grow-label" id="feastGrowLabel">Size Lv. 1</div>
+                  </div>
                 </div>
                 <div class="feast-right-foot">
-                  <p class="feast-status">At 1 returning friends invited, you earn: Dual-login bundle</p>
-                  <div class="slider-row">
-                    <input type="range" min="1" max="10" value="1" aria-label="Returning friends" />
-                    <span class="slider-val">1</span>
+                  <div class="feast-metrics" aria-label="Invite progress">
+                    <div class="kpi"><span id="feastInviteCount">1</span> Successful Invites</div>
+                    <div class="subkpi" id="feastNextHint">Next reward in 2 invites</div>
+                  </div>
+                  <div class="feast-ladder" id="feastLadder" aria-label="Reward ladder">
+                    <div class="feast-tier" data-tier="0" data-need="1">
+                      <div class="need">1 invite</div>
+                      <div class="name">Dual-login bundle</div>
+                      <div class="state">Locked</div>
+                    </div>
+                    <div class="feast-tier" data-tier="1" data-need="3">
+                      <div class="need">3 invites</div>
+                      <div class="name">XP boosts</div>
+                      <div class="state">Locked</div>
+                    </div>
+                    <div class="feast-tier" data-tier="2" data-need="5">
+                      <div class="need">5 invites</div>
+                      <div class="name">Emote / loading</div>
+                      <div class="state">Locked</div>
+                    </div>
+                    <div class="feast-tier" data-tier="3" data-need="8">
+                      <div class="need">8 invites</div>
+                      <div class="name">Rare loot chest</div>
+                      <div class="state">Locked</div>
+                    </div>
+                    <div class="feast-tier" data-tier="4" data-need="10">
+                      <div class="need">10 invites</div>
+                      <div class="name">Border + icon</div>
+                      <div class="state">Locked</div>
+                    </div>
+                  </div>
+                  <p class="feast-rank-hint" id="feastRankHint">You are #184 — 2 invites away from #160</p>
+                  <p class="feast-status">
+                    At <span id="feastInviteCountInline">1</span> successful invites, you unlock: <span id="feastRewardName">Dual-login bundle</span>
+                  </p>
+                  <div class="feast-actions" aria-label="Invite actions">
+                    <button type="button" class="btn-pill sm" id="btnFeastInvite">Invite friends</button>
+                    <button type="button" class="btn-pill sm secondary" id="btnFeastCopy">Copy link</button>
+                    <button type="button" class="btn-pill sm secondary" id="btnFeastViewStatus">View status</button>
+                  </div>
+                  <div class="feast-milestone" aria-label="Milestone progress">
+                    <div class="feast-milestone-head">
+                      <span id="feastMilestoneLabel">Milestone progress</span>
+                      <span id="feastMilestoneCount">0 / 0</span>
+                    </div>
+                    <div class="feast-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                      <span id="feastProgressFill"></span>
+                    </div>
+                  </div>
+                  <div class="feast-demo-row" aria-label="Pitch demo controls">
+                    <button type="button" class="btn-pill sm secondary" id="btnFeastAddInvite">+1 Successful invite</button>
                   </div>
                 </div>
               </div>
@@ -1464,6 +1757,44 @@
       </div>
     </div>
 
+    <!-- Invite status (pitch) -->
+    <div class="popup-layer" id="popupInviteStatus" hidden role="dialog" aria-modal="true" aria-labelledby="popupInviteStatusTitle">
+      <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
+      <div class="popup-dialog modal-slide">
+        <div class="modal-head">
+          <h2 id="popupInviteStatusTitle">Invite status</h2>
+          <button type="button" class="modal-close popup-close" aria-label="Close">×</button>
+        </div>
+        <p class="gate-body" style="margin-bottom: 14px">
+          Successful invite = a friend signs up or logs in via your link. Track who opened, and who completed.
+        </p>
+        <ul class="invite-status-list" aria-label="Invite funnel examples">
+          <li class="invite-status-row">
+            <div>
+              <div class="who">Avery</div>
+              <div class="meta">Opened · 2h ago</div>
+            </div>
+            <span class="status-pill">Opened</span>
+          </li>
+          <li class="invite-status-row">
+            <div>
+              <div class="who">Mina</div>
+              <div class="meta">Completed · +1 feed</div>
+            </div>
+            <span class="status-pill is-complete">Completed</span>
+          </li>
+          <li class="invite-status-row">
+            <div>
+              <div class="who">Jules</div>
+              <div class="meta">Sent · waiting</div>
+            </div>
+            <span class="status-pill">Sent</span>
+          </li>
+        </ul>
+        <button type="button" class="btn-pill block" id="btnInviteStatusPrimary">Invite more friends</button>
+      </div>
+    </div>
+
     <!-- Sign-in required -->
     <div class="popup-layer" id="popupNeedSignIn" hidden role="dialog" aria-modal="true" aria-labelledby="gateTitle">
       <button type="button" class="popup-backdrop" tabindex="-1" aria-label="Close dialog"></button>
@@ -1529,6 +1860,7 @@
 
         const popupShareLink = document.getElementById("popupShareLink");
         const popupShareCard = document.getElementById("popupShareCard");
+        const popupInviteStatus = document.getElementById("popupInviteStatus");
         const popupNeedSignIn = document.getElementById("popupNeedSignIn");
         var guestPanel = document.getElementById("chogathGuestPanel");
         var unlockedPanel = document.getElementById("chogathUnlockedPanel");
@@ -1537,6 +1869,7 @@
         function closePopups() {
           popupShareLink.hidden = true;
           popupShareCard.hidden = true;
+          if (popupInviteStatus) popupInviteStatus.hidden = true;
           popupNeedSignIn.hidden = true;
           document.body.classList.remove("popup-open");
         }
@@ -1581,6 +1914,29 @@
             openNeedSignInPopup();
           }
         });
+
+        var btnFeastInvite = document.getElementById("btnFeastInvite");
+        var btnFeastCopy = document.getElementById("btnFeastCopy");
+        var btnFeastViewStatus = document.getElementById("btnFeastViewStatus");
+        var btnFeastRule = document.getElementById("btnFeastRule");
+        var btnInviteStatusPrimary = document.getElementById("btnInviteStatusPrimary");
+
+        function openInviteFlow() {
+          if (isSignedIn) openPopup(popupShareLink);
+          else openNeedSignInPopup();
+        }
+
+        if (btnFeastInvite) btnFeastInvite.addEventListener("click", openInviteFlow);
+        if (btnFeastCopy) btnFeastCopy.addEventListener("click", openInviteFlow);
+        if (btnInviteStatusPrimary) btnInviteStatusPrimary.addEventListener("click", openInviteFlow);
+        if (btnFeastViewStatus && popupInviteStatus)
+          btnFeastViewStatus.addEventListener("click", function () {
+            openPopup(popupInviteStatus);
+          });
+        if (btnFeastRule && popupInviteStatus)
+          btnFeastRule.addEventListener("click", function () {
+            openPopup(popupInviteStatus);
+          });
 
         document.getElementById("btnOpenShareLinkModal").addEventListener("click", function () {
           openPopup(popupShareLink);
@@ -1779,40 +2135,160 @@
           }
         })();
 
-        // Feast slider (slide index 2)
+        // Feast (slide index 2): infinite invites + milestone progress
         var feastSlide = slideStack.querySelector('.slide.book-page[data-slide-index="2"]');
         if (feastSlide) {
-          var range = feastSlide.querySelector('input[type="range"]');
-          var val = feastSlide.querySelector(".slider-val");
           var status = feastSlide.querySelector(".feast-status");
-          var title = feastSlide.querySelector(".feast-right-title");
+          var rewardName = feastSlide.querySelector("#feastRewardName");
+          var inviteCount = feastSlide.querySelector("#feastInviteCount");
+          var inviteCountInline = feastSlide.querySelector("#feastInviteCountInline");
+          var nextHint = feastSlide.querySelector("#feastNextHint");
+          var rankHint = feastSlide.querySelector("#feastRankHint");
+          var ladder = feastSlide.querySelector("#feastLadder");
+          var growBlob = feastSlide.querySelector("#feastGrowBlob");
+          var growLabel = feastSlide.querySelector("#feastGrowLabel");
+          var milestoneLabel = feastSlide.querySelector("#feastMilestoneLabel");
+          var milestoneCount = feastSlide.querySelector("#feastMilestoneCount");
+          var progressWrap = feastSlide.querySelector(".feast-progress");
+          var progressFill = feastSlide.querySelector("#feastProgressFill");
+          var btnFeastAddInvite = feastSlide.querySelector("#btnFeastAddInvite");
           var feastLockStatus = feastSlide.querySelector("#feastLockStatus");
-          if (range && val) {
-            var titles = [
-              "Dual-login bundle",
-              "XP boosts & items",
-              "Still Hungry loading screen or emote",
-              "Rare loot chest",
-              "Exclusive border & summoner icon",
-            ];
-            function syncFeast() {
-              val.textContent = range.value;
-              var n = parseInt(range.value, 10);
-              var ti = Math.min(Math.max(n - 1, 0), titles.length - 1);
-              if (title) title.textContent = titles[ti];
-              if (status)
-                status.textContent =
-                  "At " + n + " returning friends invited, you earn: " + (title ? title.textContent : "");
+
+          var feastInvites = 1;
+          var milestones = [1, 3, 5, 8, 10];
+          var rewards = [
+            "Dual-login bundle",
+            "XP boosts & items",
+            "Still Hungry loading screen or emote",
+            "Rare loot chest",
+            "Exclusive border & summoner icon",
+          ];
+
+          function clamp(n, a, b) {
+            return Math.max(a, Math.min(b, n));
+          }
+
+          function syncFeast() {
+            var n = feastInvites;
+              if (inviteCount) inviteCount.textContent = String(n);
+              if (inviteCountInline) inviteCountInline.textContent = String(n);
+
+              var curIdx = 0;
+              for (var mi = 0; mi < milestones.length; mi++) {
+                if (n >= milestones[mi]) curIdx = mi;
+              }
+              var curReward = rewards[curIdx] || rewards[0];
+              if (rewardName) rewardName.textContent = curReward;
+
+              var maxNeed = milestones[milestones.length - 1] || 10;
+              var hasMaxReward = n >= maxNeed;
+              var extra = Math.max(0, n - maxNeed);
+
+              var curMi = milestones[curIdx] || 1;
+              var nextMi = curIdx + 1 < milestones.length ? milestones[curIdx + 1] : null;
+              if (nextHint) {
+                if (hasMaxReward) {
+                  nextHint.textContent = "Max reward unlocked — keep feeding to grow endlessly";
+                } else if (nextMi == null) {
+                  nextHint.textContent = "Next reward unlocked — keep feeding to climb the leaderboard";
+                } else {
+                  nextHint.textContent = "Next reward in " + String(nextMi - n) + " invites";
+                }
+              }
+
+              if (rankHint) {
+                var rank = Math.max(1, 188 - n * 4);
+                var away = Math.max(1, 3 - (n % 3));
+                var target = Math.max(1, rank - away * 12);
+                rankHint.textContent = "You are #" + rank + " — " + away + " invites away from #" + target;
+              }
               if (feastLockStatus) {
                 var unlocked = n >= 5;
                 feastLockStatus.textContent = unlocked ? "Unlocked" : "Locked";
                 feastLockStatus.classList.toggle("feast-lock-status--unlocked", unlocked);
                 feastLockStatus.classList.toggle("feast-lock-status--locked", !unlocked);
               }
+
+              if (milestoneLabel && milestoneCount) {
+                if (hasMaxReward) {
+                  var sizeRank = Math.floor(extra / 5) + 1;
+                  var sizeProg = extra % 5;
+                  milestoneLabel.textContent = "Endless growth · Size Rank " + sizeRank;
+                  milestoneCount.textContent = String(sizeProg) + " / 5";
+                } else if (nextMi == null) {
+                  milestoneLabel.textContent = "Milestone progress (endless)";
+                  milestoneCount.textContent = "∞";
+                } else {
+                  milestoneLabel.textContent = "To next milestone (" + nextMi + " invites)";
+                  milestoneCount.textContent = String(Math.max(0, n - curMi)) + " / " + String(nextMi - curMi);
+                }
+              }
+
+              if (progressWrap && progressFill) {
+                var pct = 100;
+                if (hasMaxReward) {
+                  pct = clamp(((extra % 5) / 5) * 100, 0, 100);
+                } else if (nextMi != null) {
+                  var denom = Math.max(1, nextMi - curMi);
+                  pct = Math.max(0, Math.min(100, ((n - curMi) / denom) * 100));
+                }
+                progressFill.style.width = pct.toFixed(2) + "%";
+                progressWrap.setAttribute("aria-valuenow", String(Math.round(pct)));
+              }
+
+              if (status) status.textContent = "At " + n + " successful invites, you unlock: " + curReward;
+
+              if (ladder) {
+                var tiers = Array.from(ladder.querySelectorAll(".feast-tier"));
+                tiers.forEach(function (t) {
+                  t.classList.remove("is-unlocked", "is-next");
+                  var need = parseInt(t.getAttribute("data-need") || "0", 10);
+                  var stateEl = t.querySelector(".state");
+                  var unlocked = n >= need && need > 0;
+                  if (unlocked) t.classList.add("is-unlocked");
+                  if (stateEl) stateEl.textContent = unlocked ? "Unlocked" : "Locked";
+                });
+                if (!hasMaxReward) {
+                  var nextTier = null;
+                  for (var ti = 0; ti < tiers.length; ti++) {
+                    var need2 = parseInt(tiers[ti].getAttribute("data-need") || "0", 10);
+                    if (need2 > n) {
+                      nextTier = tiers[ti];
+                      break;
+                    }
+                  }
+                  if (nextTier) {
+                    nextTier.classList.add("is-next");
+                    var s = nextTier.querySelector(".state");
+                    if (s) s.textContent = "Next";
+                  }
+                }
+              }
+
+              if (growBlob) {
+                var base = 0.95 + curIdx * 0.13;
+                var endless = hasMaxReward ? Math.min(0.55, extra * 0.02) : 0;
+                var scale = clamp(base + endless, 0.9, 1.8);
+                growBlob.style.transform = "scale(" + scale.toFixed(3) + ")";
+              }
+              if (growLabel) {
+                if (hasMaxReward) {
+                  var sizeRank2 = Math.floor(extra / 5) + 1;
+                  growLabel.textContent = "Endless · Size Rank " + sizeRank2;
+                } else {
+                  growLabel.textContent = "Size Lv. " + String(curIdx + 1);
+                }
+              }
             }
-            range.addEventListener("input", syncFeast);
-            syncFeast();
+
+          if (btnFeastAddInvite) {
+            btnFeastAddInvite.addEventListener("click", function () {
+              feastInvites += 1;
+              syncFeast();
+            });
           }
+
+          syncFeast();
         }
 
       })();
