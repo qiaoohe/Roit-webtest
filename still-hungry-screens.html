@@ -1780,13 +1780,16 @@
         </div>
         <label class="field-label">Your Link</label>
         <div class="field-box">wildrift.app/the-feast?invite=demo-signed-in&amp;src=card</div>
-        <label class="field-label">Share this on your social media</label>
+        <label class="field-label">Share your link on social media</label>
         <div class="social-row">
           <button type="button" data-social="x">X</button>
           <button type="button" data-social="instagram">Instagram</button>
           <button type="button" data-social="facebook">Facebook</button>
         </div>
-        <button type="button" class="btn-pill block" id="btnPopupCopyLink">Copy Link</button>
+        <div class="btn-row" style="margin-top: 0">
+          <button type="button" class="btn-pill sm" id="btnPopupDownload">Download</button>
+          <button type="button" class="btn-pill sm secondary" id="btnPopupCopyLink">Copy Link</button>
+        </div>
       </div>
     </div>
 
@@ -1928,6 +1931,13 @@
         document.querySelectorAll(".popup-layer .popup-close").forEach(function (btn) {
           btn.addEventListener("click", closePopups);
         });
+
+        var btnPopupDownload = document.getElementById("btnPopupDownload");
+        if (btnPopupDownload) {
+          btnPopupDownload.addEventListener("click", function () {
+            closePopups();
+          });
+        }
 
         document.getElementById("btnPopupCopyLink").addEventListener("click", function () {
           closePopups();
