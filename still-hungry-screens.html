@@ -76,21 +76,21 @@
       .app {
         box-sizing: border-box;
         min-height: var(--vh);
-        padding: 24px 16px var(--page-footer);
+        padding: 0;
       }
 
       .carousel {
         position: relative;
         width: 100%;
-        max-width: 1080px;
-        margin: 0 auto;
+        max-width: none;
+        margin: 0;
         overflow-x: hidden;
         overflow-y: visible;
       }
 
       /* Standard horizontal carousel: flex track + translateX */
       .slide-stack {
-        --carousel-slides: 6;
+        --carousel-slides: 7;
         --carousel-index: 0;
         display: flex;
         flex-direction: row;
@@ -108,12 +108,19 @@
         min-width: 0;
         box-sizing: border-box;
         position: relative;
-        min-height: max(var(--slide-min-h), var(--unified-book-min-h));
-        height: auto;
+        min-height: var(--vh);
+        height: var(--vh);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 12px 8px;
+        padding: 0;
+      }
+
+      /* Keep the launch screen framed; others go full-screen */
+      .slide.book-page[data-slide-index="0"] {
+        padding: 24px 16px var(--page-footer);
+        min-height: var(--vh);
+        height: var(--vh);
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -400,23 +407,24 @@
         max-width: min(360px, 100%);
       }
 
-      /* —— Shared wide card (01, 02, 03*, 04, 05) —— */
+      /* —— Shared wide card (full-screen for 01+) —— */
       .wide-card {
-        width: min(100%, 960px);
-        min-height: var(--unified-book-min-h);
+        width: 100vw;
+        height: var(--vh);
+        min-height: var(--vh);
         background: var(--gray-100);
         border: 1px solid var(--gray-250);
-        border-radius: var(--radius-xl);
+        border-radius: 0;
         display: grid;
         grid-template-columns: 1fr 1fr;
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+        box-shadow: none;
       }
 
       @media (max-width: 820px) {
         .wide-card {
           grid-template-columns: 1fr;
-          min-height: var(--unified-book-min-h);
+          min-height: var(--vh);
         }
       }
 
@@ -1612,8 +1620,8 @@
             </div>
           </div>
 
-          <!-- 3 02 Feast table -->
-          <div class="slide book-page" data-slide-index="2" role="group" aria-label="The Feast Table">
+          <!-- 3 02 Feast: Growth -->
+          <div class="slide book-page" data-slide-index="2" role="group" aria-label="The Feast Growth">
             <div class="wide-card">
               <div class="col col-light">
                 <p class="eyebrow-serif">The Feast · Table</p>
@@ -1624,18 +1632,53 @@
                   push you up the global leaderboard.
                 </p>
               </div>
-              <div class="col col-mid feast-right-col">
+              <div class="col col-mid feast-right-col" data-feast-screen="growth">
                 <div class="feast-right-head">
                   <h3 class="feast-right-title">Feed Cho'Gath</h3>
                   <p class="feast-desc-dup">Each successful invite is one bite.</p>
                 </div>
                 <div class="feast-round-slot">
                   <div class="feast-grow" role="img" aria-label="Cho'Gath growth preview">
-                    <div class="feast-grow-blob" id="feastGrowBlob" aria-hidden="true"></div>
+                    <div class="feast-grow-blob" data-feast-role="growBlob" aria-hidden="true"></div>
                   </div>
                 </div>
                 <div class="feast-right-foot">
-                  <div class="feast-ladder" id="feastLadder" aria-label="Reward ladder">
+                  <div class="feast-actions" aria-label="Invite actions">
+                    <button type="button" class="btn-pill sm" data-feast-role="cta">Feed Cho'Gath</button>
+                    <button type="button" class="btn-pill sm secondary" data-feast-role="test">Test</button>
+                  </div>
+                  <div class="feast-milestone" aria-label="Milestone progress">
+                    <div class="feast-milestone-head">
+                      <span data-feast-role="milestoneLabel">Milestone progress</span>
+                      <span data-feast-role="milestoneCount">0 / 0</span>
+                    </div>
+                    <div class="feast-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                      <span data-feast-role="progressFill"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 03 Feast: Rewards -->
+          <div class="slide book-page" data-slide-index="3" role="group" aria-label="The Feast Rewards">
+            <div class="wide-card">
+              <div class="col col-light">
+                <p class="eyebrow-serif">The Feast · Rewards</p>
+                <h2 class="headline-serif">Unlock tiers. Then grow forever.</h2>
+                <div class="img-placeholder img-placeholder--wide" role="img" aria-label="Image placeholder"></div>
+                <p class="body-sans bottom">
+                  Each successful invite unlocks the next reward tier. After the final tier, keep feeding to grow endlessly and climb the leaderboard.
+                </p>
+              </div>
+              <div class="col col-mid feast-right-col" data-feast-screen="rewards">
+                <div class="feast-right-head">
+                  <h3 class="feast-right-title">Reward ladder</h3>
+                  <p class="feast-desc-dup">Tiers unlock as invites stack up.</p>
+                </div>
+                <div class="feast-right-foot" style="margin-top: 0">
+                  <div class="feast-ladder" data-feast-role="ladder" aria-label="Reward ladder">
                     <div class="feast-tier" data-tier="0" data-need="1">
                       <div class="need">1 invite</div>
                       <div class="tier-thumb" aria-hidden="true"></div>
@@ -1668,16 +1711,16 @@
                     </div>
                   </div>
                   <div class="feast-actions" aria-label="Invite actions">
-                    <button type="button" class="btn-pill sm" id="btnFeastInvite">Feed Cho'Gath</button>
-                    <button type="button" class="btn-pill sm secondary" id="btnFeastAddInvite">Test</button>
+                    <button type="button" class="btn-pill sm" data-feast-role="cta">Feed Cho'Gath</button>
+                    <button type="button" class="btn-pill sm secondary" data-feast-role="test">Test</button>
                   </div>
                   <div class="feast-milestone" aria-label="Milestone progress">
                     <div class="feast-milestone-head">
-                      <span id="feastMilestoneLabel">Milestone progress</span>
-                      <span id="feastMilestoneCount">0 / 0</span>
+                      <span data-feast-role="milestoneLabel">Milestone progress</span>
+                      <span data-feast-role="milestoneCount">0 / 0</span>
                     </div>
                     <div class="feast-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                      <span id="feastProgressFill"></span>
+                      <span data-feast-role="progressFill"></span>
                     </div>
                   </div>
                 </div>
@@ -1685,8 +1728,8 @@
             </div>
           </div>
 
-          <!-- 4 Cho'Gath Card (composed states + popups) -->
-          <div class="slide book-page" data-slide-index="3" role="group" aria-label="Cho'Gath Card">
+          <!-- 5 Cho'Gath Card (composed states + popups) -->
+          <div class="slide book-page" data-slide-index="4" role="group" aria-label="Cho'Gath Card">
             <div class="wide-card">
               <div class="col col-light ch4-left" id="ch4Left" data-theme="hero">
                 <p class="eyebrow-serif">A greeting from the feast</p>
@@ -1707,8 +1750,8 @@
             </div>
           </div>
 
-          <!-- 5 04 Leaderboard -->
-          <div class="slide book-page" data-slide-index="4" role="group" aria-label="Leaderboard">
+          <!-- 6 04 Leaderboard -->
+          <div class="slide book-page" data-slide-index="5" role="group" aria-label="Leaderboard">
             <div class="wide-card">
               <div class="col col-light lb-left-col">
                 <div class="lb-heading-block">
@@ -1788,8 +1831,8 @@
             </div>
           </div>
 
-          <!-- 6 5-a6cd Epilogue -->
-          <div class="slide book-page" data-slide-index="5" role="group" aria-label="Epilogue">
+          <!-- 7 5-a6cd Epilogue -->
+          <div class="slide book-page" data-slide-index="6" role="group" aria-label="Epilogue">
             <div class="wide-card">
               <div class="col col-light">
                 <p class="eyebrow-serif">Still Hungry</p>
@@ -1889,10 +1932,11 @@
         const labels = [
           "Launch",
           "01 Storybook",
-          "02 Feast",
-          "03 Cho'Gath Card (+ popups)",
-          "04 Leaderboard",
-          "05 Epilogue",
+          "02 Feast · Growth",
+          "03 Feast · Rewards",
+          "04 Cho'Gath Card (+ popups)",
+          "05 Leaderboard",
+          "06 Epilogue",
         ];
 
         const popupShareCard = document.getElementById("popupShareCard");
@@ -1967,21 +2011,11 @@
         });
 
         document.getElementById("btnEpilogueInvite").addEventListener("click", function () {
-          // Epilogue CTA: jump to Chapter 4 (slide index 3).
+          // Epilogue CTA: jump to Chapter 4 (slide index 4).
           closePopups();
-          index = 3;
+          index = 4;
           renderImmediate();
         });
-
-        var btnFeastInvite = document.getElementById("btnFeastInvite");
-
-        if (btnFeastInvite) {
-          btnFeastInvite.addEventListener("click", function () {
-            // Pitch: feed action leads to the next page.
-            if (index === 2) go(1);
-            else index = 3;
-          });
-        }
 
         var btnOpenShareLinkModal = document.getElementById("btnOpenShareLinkModal");
         if (btnOpenShareLinkModal) {
@@ -2240,19 +2274,22 @@
           }
         })();
 
-        // Feast (slide index 2): infinite invites + milestone progress
-        var feastSlide = slideStack.querySelector('.slide.book-page[data-slide-index="2"]');
-        if (feastSlide) {
-          var status = feastSlide.querySelector(".feast-status");
-          var rewardName = feastSlide.querySelector("#feastRewardName");
-          var ladder = feastSlide.querySelector("#feastLadder");
-          var growBlob = feastSlide.querySelector("#feastGrowBlob");
-          var btnFeastInvite = feastSlide.querySelector("#btnFeastInvite");
-          var milestoneLabel = feastSlide.querySelector("#feastMilestoneLabel");
-          var milestoneCount = feastSlide.querySelector("#feastMilestoneCount");
-          var progressWrap = feastSlide.querySelector(".feast-progress");
-          var progressFill = feastSlide.querySelector("#feastProgressFill");
-          var btnFeastAddInvite = feastSlide.querySelector("#btnFeastAddInvite");
+        // Feast (slide index 2 + 3): shared state across both screens
+        var feastRoots = Array.from(slideStack.querySelectorAll('.col.col-mid.feast-right-col[data-feast-screen]'));
+        if (feastRoots.length) {
+          function clamp(n, a, b) {
+            return Math.max(a, Math.min(b, n));
+          }
+
+          function getRoleEls(role) {
+            var out = [];
+            feastRoots.forEach(function (root) {
+              root.querySelectorAll('[data-feast-role="' + role + '"]').forEach(function (el) {
+                out.push(el);
+              });
+            });
+            return out;
+          }
 
           var feastInvites = 1;
           var milestones = [1, 3, 5, 8, 10];
@@ -2264,109 +2301,113 @@
             "Exclusive border & summoner icon",
           ];
 
-          function clamp(n, a, b) {
-            return Math.max(a, Math.min(b, n));
-          }
-
           function syncFeast() {
             var n = feastInvites;
-
-              var curIdx = 0;
-              for (var mi = 0; mi < milestones.length; mi++) {
-                if (n >= milestones[mi]) curIdx = mi;
-              }
-              var curReward = rewards[curIdx] || rewards[0];
-              if (rewardName) rewardName.textContent = curReward;
-
-              var maxNeed = milestones[milestones.length - 1] || 10;
-              var hasMaxReward = n >= maxNeed;
-              var extra = Math.max(0, n - maxNeed);
-
-              var curMi = milestones[curIdx] || 1;
-              var nextMi = curIdx + 1 < milestones.length ? milestones[curIdx + 1] : null;
-
-              if (milestoneLabel && milestoneCount) {
-                if (hasMaxReward) {
-                  var sizeRank = Math.floor(extra / 5) + 1;
-                  var sizeProg = extra % 5;
-                  milestoneLabel.textContent = "Endless growth · Size Rank " + sizeRank;
-                  milestoneCount.textContent = String(sizeProg) + " / 5";
-                } else if (nextMi == null) {
-                  milestoneLabel.textContent = "Milestone progress (endless)";
-                  milestoneCount.textContent = "∞";
-                } else {
-                  milestoneLabel.textContent = "To next milestone (" + nextMi + " invites)";
-                  milestoneCount.textContent = String(Math.max(0, n - curMi)) + " / " + String(nextMi - curMi);
-                }
-              }
-
-              if (progressWrap && progressFill) {
-                var pct = 100;
-                if (hasMaxReward) {
-                  pct = clamp(((extra % 5) / 5) * 100, 0, 100);
-                } else if (nextMi != null) {
-                  var denom = Math.max(1, nextMi - curMi);
-                  pct = Math.max(0, Math.min(100, ((n - curMi) / denom) * 100));
-                }
-                progressFill.style.width = pct.toFixed(2) + "%";
-                progressWrap.setAttribute("aria-valuenow", String(Math.round(pct)));
-              }
-
-              // Keep status line quiet for pitch; ladder + lock communicate progression.
-              if (status) status.textContent = "";
-
-              if (ladder) {
-                var tiers = Array.from(ladder.querySelectorAll(".feast-tier"));
-                tiers.forEach(function (t) {
-                  t.classList.remove("is-unlocked", "is-next");
-                  var need = parseInt(t.getAttribute("data-need") || "0", 10);
-                  var stateEl = t.querySelector(".state");
-                  var unlocked = n >= need && need > 0;
-                  if (unlocked) t.classList.add("is-unlocked");
-                  if (stateEl) stateEl.textContent = unlocked ? "Unlocked" : "Locked";
-                });
-                if (!hasMaxReward) {
-                  var nextTier = null;
-                  for (var ti = 0; ti < tiers.length; ti++) {
-                    var need2 = parseInt(tiers[ti].getAttribute("data-need") || "0", 10);
-                    if (need2 > n) {
-                      nextTier = tiers[ti];
-                      break;
-                    }
-                  }
-                  if (nextTier) {
-                    nextTier.classList.add("is-next");
-                    var s = nextTier.querySelector(".state");
-                    if (s) s.textContent = "Next";
-                  }
-                }
-              }
-
-              if (growBlob) {
-                var base = 0.95 + curIdx * 0.13;
-                var endless = hasMaxReward ? Math.min(0.55, extra * 0.02) : 0;
-                var scale = clamp(base + endless, 0.9, 1.8);
-                growBlob.style.transform = "scale(" + scale.toFixed(3) + ")";
-              }
+            var curIdx = 0;
+            for (var mi = 0; mi < milestones.length; mi++) {
+              if (n >= milestones[mi]) curIdx = mi;
             }
+            var curReward = rewards[curIdx] || rewards[0];
 
-          if (btnFeastAddInvite) {
-            btnFeastAddInvite.addEventListener("click", function () {
+            var maxNeed = milestones[milestones.length - 1] || 10;
+            var hasMaxReward = n >= maxNeed;
+            var extra = Math.max(0, n - maxNeed);
+
+            var curMi = milestones[curIdx] || 1;
+            var nextMi = curIdx + 1 < milestones.length ? milestones[curIdx + 1] : null;
+
+            // Milestone header + progress
+            getRoleEls("milestoneLabel").forEach(function (el) {
+              if (hasMaxReward) {
+                var sizeRank = Math.floor(extra / 5) + 1;
+                el.textContent = "Endless growth · Size Rank " + sizeRank;
+              } else if (nextMi == null) {
+                el.textContent = "Milestone progress (endless)";
+              } else {
+                el.textContent = "To next milestone (" + nextMi + " invites)";
+              }
+            });
+
+            getRoleEls("milestoneCount").forEach(function (el) {
+              if (hasMaxReward) {
+                var sizeProg = extra % 5;
+                el.textContent = String(sizeProg) + " / 5";
+              } else if (nextMi == null) {
+                el.textContent = "∞";
+              } else {
+                el.textContent = String(Math.max(0, n - curMi)) + " / " + String(nextMi - curMi);
+              }
+            });
+
+            feastRoots.forEach(function (root) {
+              var wrap = root.querySelector(".feast-progress");
+              var fill = root.querySelector('[data-feast-role="progressFill"]');
+              if (!wrap || !fill) return;
+              var pct = 100;
+              if (hasMaxReward) {
+                pct = clamp(((extra % 5) / 5) * 100, 0, 100);
+              } else if (nextMi != null) {
+                var denom = Math.max(1, nextMi - curMi);
+                pct = Math.max(0, Math.min(100, ((n - curMi) / denom) * 100));
+              }
+              fill.style.width = pct.toFixed(2) + "%";
+              wrap.setAttribute("aria-valuenow", String(Math.round(pct)));
+            });
+
+            // Ladder tiers
+            feastRoots.forEach(function (root) {
+              var ladder = root.querySelector('[data-feast-role="ladder"]');
+              if (!ladder) return;
+              var tiers = Array.from(ladder.querySelectorAll(".feast-tier"));
+              tiers.forEach(function (t) {
+                t.classList.remove("is-unlocked", "is-next");
+                var need = parseInt(t.getAttribute("data-need") || "0", 10);
+                var stateEl = t.querySelector(".state");
+                var unlocked = n >= need && need > 0;
+                if (unlocked) t.classList.add("is-unlocked");
+                if (stateEl) stateEl.textContent = unlocked ? "Unlocked" : "Locked";
+              });
+              if (!hasMaxReward) {
+                var nextTier = null;
+                for (var ti = 0; ti < tiers.length; ti++) {
+                  var need2 = parseInt(tiers[ti].getAttribute("data-need") || "0", 10);
+                  if (need2 > n) {
+                    nextTier = tiers[ti];
+                    break;
+                  }
+                }
+                if (nextTier) {
+                  nextTier.classList.add("is-next");
+                  var s = nextTier.querySelector(".state");
+                  if (s) s.textContent = "Next";
+                }
+              }
+            });
+
+            // Growth blob
+            getRoleEls("growBlob").forEach(function (el) {
+              var base = 0.95 + curIdx * 0.13;
+              var endless = hasMaxReward ? Math.min(0.55, extra * 0.02) : 0;
+              var scale = clamp(base + endless, 0.9, 1.8);
+              el.style.transform = "scale(" + scale.toFixed(3) + ")";
+            });
+          }
+
+          getRoleEls("test").forEach(function (btn) {
+            btn.addEventListener("click", function () {
               feastInvites += 1;
               syncFeast();
             });
-          }
+          });
 
-          if (btnFeastInvite) {
-            btnFeastInvite.addEventListener("click", function () {
-              // Third screen CTA: jump to Chapter 4 (slide index 3).
-              if (index === 2) go(1);
-              else {
-                index = 3;
-                renderImmediate();
-              }
+          getRoleEls("cta").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              // Feast CTA: jump to Chapter 4 (slide index 4).
+              closePopups();
+              index = 4;
+              renderImmediate();
             });
-          }
+          });
 
           syncFeast();
         }
