@@ -1,0 +1,2976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roit — Cho'Gath Feast</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700;1,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* 复古暖色：赭褐底 + 蜜金高光（保留 --cyan 命名以减少改动） */
+      --bg-deep: #1e1814;
+      --cyan: #e4b068;
+      --cyan-mid: #f0ca8c;
+      --cyan-dark: #b87a42;
+      --navy: #3a3028;
+      --white: #f5ebe0;
+      --card-border: #c9644a;
+      --nav-h: 80px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    button {
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
+      width: fit-content;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: #14100c;
+      color: var(--white);
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* 沉浸式竖向分屏：仅能通过 CTA 程序化滚动，禁用滚轮/触控拖屏 */
+    .snap-wrap {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+      padding-top: 0;
+      box-sizing: border-box;
+      scroll-padding-top: var(--nav-h);
+      scroll-padding-bottom: 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      touch-action: manipulation;
+      overscroll-behavior-y: contain;
+    }
+    .snap-wrap::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      background: transparent;
+      display: none;
+    }
+
+    .screen {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-deep);
+    }
+
+    .frame {
+      width: 100%;
+      max-width: none;
+      margin: 0 auto;
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+      position: relative;
+    }
+
+    /* 顶栏（与 Figma riotbar 一致结构） */
+    .riotbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      background: rgba(52, 40, 32, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .riotbar__inner {
+      width: 100%;
+      max-width: none;
+      display: flex;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .riotbar__left {
+      width: 131px;
+      display: flex;
+      align-items: center;
+      padding-left: 36px;
+      flex-shrink: 0;
+    }
+    .riotbar__logo-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .riotbar__fist {
+      width: 75px;
+      height: 24px;
+      background: linear-gradient(90deg, #fff6ea 0%, #c9b9a8 100%);
+      border-radius: 4px;
+      opacity: 0.85;
+    }
+    .riotbar__caret {
+      width: 8px;
+      height: 5px;
+      background: var(--cyan);
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+    }
+
+    .riotbar__center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+    .riotbar__game-icon-wrap {
+      width: 62px;
+      padding-left: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .riotbar__game-icon {
+      width: 40px;
+      height: 26px;
+      background: linear-gradient(135deg, #c89b3c, #785a28);
+      border-radius: 2px;
+    }
+    .riotbar__links {
+      display: flex;
+      align-items: stretch;
+      padding-left: 18px;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    .riotbar__links a, .riotbar__links span.fake-link {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      text-decoration: none;
+      white-space: nowrap;
+      line-height: 15.6px;
+    }
+
+    .riotbar__right {
+      width: 163px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 32px;
+      gap: 0;
+    }
+    .riotbar__globe {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .riotbar__signin {
+      margin-left: 8px;
+      padding: 8px 16px;
+      background: rgba(128,128,128,0.2);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    .headline {
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-style: italic;
+      font-weight: 800;
+      line-height: 1.1;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .sub {
+      font-size: 16px;
+      line-height: 29px;
+      font-weight: 400;
+      color: #fff;
+      margin: 0;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 32px;
+      background: var(--cyan);
+      color: #000;
+      font-size: 16.2px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 32px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 16.2px;
+      font-weight: 600;
+      text-transform: uppercase;
+      border: 1px solid var(--cyan);
+      cursor: pointer;
+    }
+
+    /* —— 通用交互：悬停 / 点击 / 焦点 —— */
+    .btn-primary,
+    .btn-outline {
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, filter 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 0 0 2px rgba(212, 145, 78, 0.35), 0 8px 24px rgba(212, 145, 78, 0.25);
+      transform: translateY(-2px);
+    }
+    .btn-primary:active {
+      transform: translateY(0) scale(0.98);
+      filter: brightness(0.94);
+      box-shadow: 0 0 0 1px rgba(212, 145, 78, 0.2);
+    }
+    .btn-outline:hover {
+      background: rgba(48, 38, 30, 0.95);
+      border-color: var(--cyan-mid);
+      box-shadow: 0 0 0 2px rgba(218, 168, 110, 0.25), 0 8px 20px rgba(0, 0, 0, 0.35);
+      transform: translateY(-2px);
+    }
+    .btn-outline:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow: none;
+    }
+    .btn-primary:focus-visible,
+    .btn-outline:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 3px;
+    }
+    .btn-primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      filter: grayscale(0.25);
+    }
+    .btn-primary:disabled:hover {
+      transform: none;
+      filter: grayscale(0.25);
+      box-shadow: none;
+    }
+    .btn-outline:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .riotbar__links a,
+    .riotbar__links .fake-link {
+      cursor: pointer;
+      transition: color 0.18s ease, opacity 0.18s ease, transform 0.18s ease;
+      border-radius: 4px;
+    }
+    .riotbar__links a:hover,
+    .riotbar__links .fake-link:hover {
+      color: var(--cyan-mid);
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+    .riotbar__links a:active,
+    .riotbar__links .fake-link:active {
+      transform: translateY(0);
+      opacity: 0.85;
+    }
+    .riotbar__links a:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+
+    .riotbar__logo-pill { cursor: default; }
+    .riotbar__fist,
+    .riotbar__game-icon {
+      transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .riotbar__logo-pill:hover .riotbar__fist,
+    .riotbar__game-icon-wrap:hover .riotbar__game-icon {
+      opacity: 1;
+      transform: scale(1.04);
+      box-shadow: 0 0 12px rgba(212, 145, 78, 0.2);
+    }
+
+    .riotbar__globe {
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .riotbar__globe:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--cyan-mid);
+      transform: scale(1.06);
+      box-shadow: 0 0 12px rgba(218, 168, 110, 0.2);
+    }
+    .riotbar__globe:active {
+      transform: scale(0.96);
+    }
+
+    .riotbar__signin {
+      border: 1px solid transparent;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .riotbar__signin:hover {
+      background: rgba(128, 128, 128, 0.35);
+      border-color: rgba(218, 168, 110, 0.5);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    }
+    .riotbar__signin:active {
+      transform: translateY(0) scale(0.97);
+    }
+    .riotbar__signin:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+
+    .car-btn {
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .car-btn:hover {
+      background: rgba(218, 168, 110, 0.12);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 20px rgba(218, 168, 110, 0.25), inset 0 0 0 1px rgba(218, 168, 110, 0.15);
+      transform: scale(1.08);
+    }
+    .car-btn:active {
+      transform: scale(0.94);
+      box-shadow: none;
+    }
+    .car-btn:focus-visible {
+      outline: 2px solid var(--cyan-mid);
+      outline-offset: 3px;
+    }
+    .car-btn.is-disabled {
+      opacity: 0.32;
+      cursor: not-allowed;
+      pointer-events: none;
+      box-shadow: none;
+      transform: none;
+      filter: grayscale(0.3);
+    }
+
+    .thumb {
+      appearance: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+    .thumb:hover:not(.is-selected) {
+      transform: translateY(-3px);
+      border-color: rgba(218, 168, 110, 0.35);
+    }
+    .thumb:active {
+      transform: scale(0.92);
+    }
+    .thumb.is-selected {
+      box-shadow: none;
+    }
+    .thumb.is-selected:active {
+      transform: scale(0.96);
+    }
+    .thumb:focus-visible {
+      outline: 2px solid var(--cyan-mid);
+      outline-offset: 3px;
+    }
+    .thumb-inner {
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .thumb:hover .thumb-inner {
+      background: #70604e;
+    }
+    .s2 .thumb:hover .thumb-inner {
+      background: rgba(255, 255, 255, 1);
+    }
+
+    .dot {
+      appearance: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dot:hover:not(.active) {
+      border-color: rgba(218, 168, 110, 0.55);
+      transform: scale(1.06);
+    }
+    .dot:active {
+      transform: scale(0.92);
+    }
+    .dot.active {
+      box-shadow: 0 0 14px rgba(218, 168, 110, 0.35);
+    }
+    .dot:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 3px;
+    }
+    .dot b {
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .dot:hover:not(.active) b {
+      background: #786654;
+    }
+
+    .reward-ring {
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .reward-ring:focus-visible {
+      outline: 2px solid var(--cyan-mid);
+      outline-offset: 4px;
+    }
+    .reward-ring:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 40px rgba(212, 145, 78, 0.12);
+      border-color: rgba(218, 168, 110, 0.65);
+    }
+    .reward-ring:active {
+      transform: scale(0.985);
+    }
+
+    .field {
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .field:hover {
+      border-color: var(--cyan);
+    }
+    .field:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(212, 145, 78, 0.25);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .social-btn {
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .social-btn:hover {
+      background: rgba(218, 168, 110, 0.15);
+      color: var(--cyan-mid);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+    .social-btn:active {
+      transform: translateY(0) scale(0.94);
+    }
+    .social-btn:focus-visible {
+      outline: 2px solid var(--cyan-mid);
+      outline-offset: 2px;
+    }
+
+    .dual-actions button {
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dual-actions button:hover {
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 0 1px rgba(218, 168, 110, 0.35);
+      transform: translateY(-2px);
+    }
+    .dual-actions button:active {
+      transform: translateY(0) scale(0.98);
+    }
+    .dual-actions button:focus-visible {
+      outline: 2px solid var(--cyan-mid);
+      outline-offset: 2px;
+    }
+
+    .invite-card {
+      cursor: default;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .invite-card:hover {
+      border-color: var(--cyan-mid);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      transform: translateY(-3px);
+    }
+    .invite-card:active {
+      transform: translateY(-1px) scale(0.995);
+    }
+    .s5-slide-enter {
+      animation: s5CardIn 0.35s ease both;
+    }
+    @keyframes s5CardIn {
+      from {
+        opacity: 0;
+        transform: translateX(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Screen 4 卡片 carousel 视觉层次 */
+    .cards-track {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(16px, 3vw, 36px);
+      flex: 1;
+      min-width: 0;
+    }
+    .cards-track.s4-flip-next {
+      animation: s4FlipNext 0.42s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+    }
+    .cards-track.s4-flip-prev {
+      animation: s4FlipPrev 0.42s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+    }
+    @keyframes s4FlipNext {
+      from {
+        opacity: 0.75;
+        transform: translateX(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    @keyframes s4FlipPrev {
+      from {
+        opacity: 0.75;
+        transform: translateX(-18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    .card-portrait {
+      cursor: pointer;
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease, filter 0.4s ease, box-shadow 0.3s ease;
+    }
+    .card-portrait:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+    .card-portrait:active {
+      filter: brightness(0.88);
+    }
+    .card-portrait.is-side {
+      transform: scale(0.9);
+      opacity: 0.72;
+      filter: saturate(0.85) brightness(0.92);
+    }
+    .card-portrait.is-center {
+      transform: scale(1);
+      opacity: 1;
+      filter: none;
+      z-index: 2;
+    }
+    .card-portrait.hero-card.is-center:hover {
+      box-shadow: 0 0 0 2px rgba(216, 100, 78, 0.5), 0 16px 40px rgba(216, 100, 78, 0.15);
+    }
+    .js-s4-card:focus-visible {
+      outline: 2px solid var(--cyan-mid);
+      outline-offset: 6px;
+    }
+
+    .pager span {
+      min-width: 3ch;
+      text-align: center;
+      user-select: none;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+    .pager:hover span {
+      color: var(--cyan-mid);
+    }
+
+    .feed-chances {
+      transition: transform 0.2s ease, color 0.2s ease, letter-spacing 0.2s ease;
+    }
+
+    /* Toast（喂养反馈） */
+    .toast-stack {
+      position: fixed;
+      bottom: calc(28px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 400;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: stretch;
+      width: min(400px, 92vw);
+      pointer-events: none;
+    }
+    .toast {
+      pointer-events: auto;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: rgba(38, 28, 22, 0.93);
+      border: 1px solid rgba(218, 168, 110, 0.45);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(212, 145, 78, 0.12);
+      color: #f2e8dc;
+      font-size: 15px;
+      line-height: 1.45;
+      animation: toastIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .toast strong {
+      display: block;
+      color: var(--cyan-mid);
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .toast.toast--out {
+      animation: toastOut 0.35s ease forwards;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateY(8px); }
+    }
+
+    .is-pressing {
+      transform: translateY(0) scale(0.97);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn-primary, .btn-outline, .car-btn,       .thumb, .dot, .card-portrait, .invite-card,
+      .feed-chances, .s5-slide-enter, .cards-track.s4-flip-next, .cards-track.s4-flip-prev,
+      .toast, .toast-stack .toast {
+        transition: none;
+        animation: none;
+      }
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* 背景占位 */
+    .bg-cover {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #4d3726 0%, #34261c 42%, #1a1510 100%);
+    }
+    .bg-cover.ph-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('https://picsum.photos/seed/roit-hero/1920/1080') center/cover no-repeat;
+      opacity: 0.55;
+    }
+    .gradient-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0.75) 100%);
+      pointer-events: none;
+    }
+    .gradient-overlay--blur {
+      backdrop-filter: blur(50px);
+      background: rgba(0,0,0,0.8);
+    }
+    .s5 .frame > .flow-bg-pane,
+    .s6 .frame > .flow-bg-pane {
+      z-index: 0;
+    }
+    .s5 .frame > .gradient-overlay,
+    .s6 .frame > .gradient-overlay {
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* —— Screen 1 —— */
+    .s1 .frame {
+      padding-bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+    }
+    .s1 .hero-zone {
+      position: relative;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      top: auto;
+      transform: none;
+      width: 100%;
+      padding: clamp(32px, 6vh, 80px) clamp(20px, 5vw, 72px);
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      z-index: 2;
+    }
+    .s1 .hero-stack {
+      width: 100%;
+      max-width: none;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      align-items: center;
+    }
+    .s1 .s1-head { font-size: clamp(38px, 6vw, 70px); max-width: 808px; }
+    .s1 .s1-sub { max-width: 888px; }
+
+    /* —— Screen 2 ——（中央 1:1 圆预览 + 下方方形文字 carousel） */
+    .s2 .frame.s2-frame {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+    }
+    .s2-stack {
+      position: relative;
+      z-index: 2;
+      flex: 0 1 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(20px, 3.6vh, 40px);
+      padding: clamp(20px, 4vh, 48px) 16px;
+      min-height: 0;
+      width: 100%;
+      box-sizing: border-box;
+      max-width: none;
+      margin: 0 auto;
+    }
+    .s2-title {
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
+      width: 100%;
+      max-width: none;
+      padding-inline: clamp(16px, 4vw, 56px);
+      box-sizing: border-box;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .s2-title .headline { font-size: clamp(28px, 5vw, 54px); }
+    .s2-center-stage {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: clamp(12px, 2vh, 20px);
+    }
+    /* 居中 1:1 圆形主卡片 */
+    .s2-char {
+      --s2-grow: 1;
+      width: min(240px, 42vmin);
+      height: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      margin: 0;
+      transform: scale(var(--s2-grow));
+      background: radial-gradient(circle at 35% 30%, #9a6a42 0%, #4a3428 45%, #1e1814 100%);
+      border: 3px solid var(--cyan-mid);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 12px 48px rgba(212, 145, 78, 0.15);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(12px, 3vmin, 20px);
+      transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease, box-shadow 0.35s ease;
+      color: rgba(255,255,255,0.92);
+      font-size: clamp(13px, 3.2vmin, 16px);
+      font-weight: 600;
+      line-height: 1.35;
+      text-transform: none;
+      max-width: 90vw;
+    }
+    .s2-char-inner {
+      display: block;
+      hyphens: auto;
+      word-break: break-word;
+    }
+    .s2-char-hint {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: -4px;
+    }
+    .s2-char:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 1px rgba(218,168,110,0.3), 0 16px 52px rgba(212,145,78,0.22);
+    }
+    .s2-bottom {
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
+      width: min(760px, 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(18px, 3vh, 28px);
+      flex-shrink: 0;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    .carousel-row {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      width: 100%;
+      justify-content: center;
+    }
+    .car-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 99px;
+      border: 1px solid var(--cyan-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: var(--cyan-mid);
+      font-size: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .thumbs {
+      display: flex;
+      gap: 14px;
+      flex-wrap: nowrap;
+      justify-content: center;
+      min-width: 0;
+      flex: 1;
+      max-width: 100%;
+      overflow-x: auto;
+      padding: 8px 0;
+      scrollbar-width: thin;
+    }
+    .thumbs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    /* 第二屏：轻量 1:1 方卡 + 高可读英文 */
+    .s2 .thumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      min-width: 72px;
+      flex-shrink: 0;
+      padding: 5px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.035);
+    }
+    .s2 .thumb:hover:not(.is-selected) {
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-2px);
+    }
+    .s2 .thumb-inner {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1;
+      margin: 0;
+      padding: 6px 5px;
+      border: none;
+      border-radius: 5px;
+      background: rgba(245, 249, 252, 0.96);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .s2 .thumb-label {
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+      text-align: center;
+      text-transform: none;
+      color: #1c1610;
+      display: block;
+      overflow-wrap: anywhere;
+      hyphens: manual;
+    }
+    @media (max-width: 520px) {
+      .s2 .thumb { width: 62px; height: 62px; min-width: 62px; padding: 4px; }
+      .s2 .thumb-inner { padding: 5px 4px; border-radius: 4px; }
+      .s2 .thumb-label { font-size: 10px; line-height: 1.12; }
+    }
+    .s2 .thumb.is-selected {
+      border-color: rgba(212, 145, 78, 0.85);
+      background: rgba(212, 145, 78, 0.08);
+      box-shadow: 0 0 0 1px rgba(212, 145, 78, 0.35);
+    }
+    .s2 .thumb.is-selected .thumb-inner {
+      background: #fff;
+      box-shadow: inset 0 0 0 2px var(--cyan), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+    .feed-chances.flash {
+      color: var(--cyan-mid);
+      transform: scale(1.06);
+    }
+    .thumb {
+      width: 68px;
+      height: 68px;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+    }
+    .thumb.is-active { border-color: var(--cyan-mid); }
+    .thumb-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      border: 1px solid #fff;
+      background: #3d342c;
+    }
+    .feed-chances {
+      font-size: 16.2px;
+      font-weight: 500;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* —— Screen 3 —— */
+    .s3-glow {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: min(100vw, 1853px);
+      height: min(100vw, 1853px);
+      background: radial-gradient(circle, rgba(212,145,78,0.12) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .s3 .frame {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+      align-content: center;
+      justify-items: stretch;
+      min-height: 100%;
+      gap: clamp(20px, 4vw, 48px);
+      padding: clamp(16px, 3vh, 40px) clamp(20px, 5vw, 72px);
+      box-sizing: border-box;
+    }
+    .s3-col-left {
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
+      width: 100%;
+      max-width: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(32px, 5vh, 60px);
+      z-index: 2;
+    }
+    .s3-col-left .headline { font-size: clamp(28px, 3.5vw, 54px); }
+    .s3-col-right {
+      position: relative;
+      right: auto;
+      left: auto;
+      top: auto;
+      transform: none;
+      width: 100%;
+      max-width: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 26px;
+      z-index: 2;
+    }
+    .reward-ring {
+      width: min(420px, 100%);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2px solid rgba(218, 168, 110, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(circle at 30% 30%, rgba(140, 82, 52, 0.52), rgba(22, 18, 14, 0.92));
+    }
+    .reward-ring__inner {
+      width: 72%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #4a3828, #1c1610);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .reward-badge {
+      position: absolute;
+      top: 36%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--navy);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+    .reward-caption {
+      position: absolute;
+      bottom: 12%;
+      text-align: center;
+    }
+    .reward-caption .t1 { margin: 0; color: var(--cyan); font-size: 16px; font-weight: 600; text-transform: uppercase; }
+    .reward-caption .t2 { margin: 4px 0 0; font-size: 14px; color: #fff; }
+    .s3-meta-strip {
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(245, 235, 224, 0.9);
+      margin: 0 0 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+    }
+    .s3-meta-strip strong { color: var(--cyan-mid); font-weight: 700; }
+    .s3-tier-hint {
+      margin: 6px 0 0;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.72);
+      max-width: 280px;
+    }
+    .reward-ring.is-tier-locked .reward-ring__inner { opacity: 0.72; filter: grayscale(0.25); }
+    .reward-ring.is-tier-locked { border-color: rgba(255, 255, 255, 0.22); }
+    .dot.is-tier-locked:not(.active) { opacity: 0.42; border-style: dashed; }
+    .dot.is-tier-locked.active { opacity: 0.82; }
+
+    .invite-dots {
+      display: flex;
+      gap: 23px;
+    }
+    .dot {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      padding: 4px;
+      border: 2px solid rgba(255,255,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dot.active { border-color: var(--cyan-mid); }
+    .dot b {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #5c4f42;
+      display: block;
+    }
+
+    @media (max-width: 1100px) {
+      .s3 .frame {
+        grid-template-columns: 1fr;
+        padding-top: calc(var(--nav-h) / 4);
+      }
+      .s3-col-left, .s3-col-right {
+        width: 100%;
+        max-width: none;
+        margin: 0 auto;
+      }
+      .s3-col-right { margin-top: 0; }
+      .invite-dots { flex-wrap: wrap; justify-content: center; }
+    }
+
+    /* —— Screen 4 ——（略上移 + 区块间舒适间距） */
+    .s4-main {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(calc(-50% - clamp(28px, 4vh, 56px)));
+      width: 100%;
+      max-width: none;
+      padding: clamp(12px, 2vh, 28px) clamp(16px, 4vw, 56px);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(36px, 5vh, 56px);
+      z-index: 2;
+      text-align: center;
+    }
+    .s4-main__header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(14px, 2vh, 22px);
+      max-width: min(920px, 100%);
+    }
+    .s4-main .headline { font-size: clamp(28px, 4vw, 54px); margin: 0; }
+    .s4-main__lede {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .carousel-cards {
+      display: flex;
+      align-items: center;
+      gap: clamp(36px, 4.5vw, 56px);
+      width: 100%;
+      justify-content: center;
+    }
+    .card-portrait {
+      width: min(252px, 28vw);
+      height: auto;
+      min-height: 320px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 5px;
+      background: transparent;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .card-portrait.hero-card {
+      width: min(292px, 32vw);
+      border: 2px solid var(--card-border);
+      border-radius: 26px;
+      padding: 6px;
+    }
+    .card-portrait .ph-img {
+      height: 100%;
+      min-height: 320px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.5));
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 18px;
+      text-align: left;
+    }
+    .card-portrait .ph-img strong {
+      color: var(--cyan-mid);
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .card-portrait .ph-img span { font-size: 13px; color: #ddd; margin-top: 8px; }
+
+    /* Screen 4 · 官方皮肤 splash（Data Dragon） */
+    .card-portrait .ph-img.ph-img--splash {
+      padding: 0;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-portrait .ph-img--splash .ph-splash-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+    .card-portrait .ph-img__meta {
+      position: relative;
+      z-index: 2;
+      padding: 20px 16px 16px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.75) 38%, rgba(0, 0, 0, 0.92) 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      text-align: left;
+      width: 100%;
+      min-height: 46%;
+      justify-content: flex-end;
+    }
+    .card-portrait .ph-img__meta strong {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .card-portrait .ph-img__meta span {
+      margin-top: 0;
+      font-size: 11px;
+      line-height: 1.35;
+      color: rgba(255, 255, 255, 0.82);
+      text-transform: none;
+    }
+
+    /* 流程背景：第四屏选定皮肤后进 5 / 6 屏 */
+    .flow-bg-pane {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-color: var(--bg-deep);
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      transition: background-image 0.5s ease, opacity 0.4s ease;
+    }
+    .flow-bg-pane.is-empty {
+      opacity: 0.45;
+      background-image: none;
+    }
+
+    /* —— Screen 5 ——（整块略上移：大卡 + CTA 在下半部，光学重心偏下） */
+    .s5-main {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(calc(-50% - clamp(40px, 5.5vh, 76px)));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(32px, 4.5vh, 48px);
+      width: 100%;
+      max-width: none;
+      padding: clamp(16px, 2.5vh, 32px) clamp(20px, 4vw, 64px);
+      box-sizing: border-box;
+      z-index: 2;
+      text-align: center;
+    }
+    .s5-main .headline {
+      font-size: clamp(28px, 4vw, 54px);
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+    .s5-invite-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(28px, 3.5vh, 40px);
+      width: 100%;
+      max-width: min(520px, 100%);
+    }
+    .s5 .invite-card {
+      width: 100%;
+      max-width: 440px;
+      min-height: 0;
+      height: auto;
+      aspect-ratio: 1;
+      max-height: min(48vh, 420px);
+      border-radius: 22px;
+      border: 1px solid var(--cyan-dark);
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(25px);
+      padding: clamp(32px, 4.2vw, 48px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: clamp(20px, 2.5vh, 28px);
+      text-align: left;
+      box-sizing: border-box;
+    }
+    .s5 .invite-card h3 {
+      margin: 0;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: clamp(22px, 4vw, 30px);
+      line-height: 1.15;
+      text-transform: uppercase;
+      color: var(--cyan-mid);
+    }
+    .s5 .invite-card p.sub {
+      font-size: clamp(16px, 2.1vw, 18px);
+      line-height: 1.55;
+      margin: 0;
+    }
+    .s5 .pager {
+      display: flex;
+      align-items: center;
+      gap: clamp(36px, 5vw, 52px);
+      justify-content: center;
+      font-size: 18px;
+    }
+    .s5-main .btn-primary.js-nav-s6 {
+      min-height: 56px;
+      padding: 18px 40px;
+    }
+
+    /* —— Screen 6 —— */
+    .s6 .frame {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.95fr);
+      align-items: center;
+      align-content: center;
+      justify-items: stretch;
+      min-height: 100%;
+      gap: clamp(24px, 4vw, 56px);
+      padding: clamp(16px, 3vh, 40px) clamp(20px, 5vw, 72px);
+      box-sizing: border-box;
+    }
+    .s6-left {
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
+      width: 100%;
+      max-width: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(32px, 5vh, 60px);
+      z-index: 2;
+    }
+    .s6-left .headline { font-size: clamp(28px, 3.6vw, 54px); }
+    .inputs { display: flex; flex-direction: column; gap: 20px; }
+    .field {
+      border: 1px solid var(--cyan-mid);
+      padding: 20px;
+      background: transparent;
+      color: #fff;
+      font-size: 16px;
+      text-transform: uppercase;
+      width: 100%;
+      font-family: inherit;
+    }
+    .s6-right {
+      position: relative;
+      right: auto;
+      top: auto;
+      transform: none;
+      width: 100%;
+      max-width: none;
+      background: rgba(255,255,255,0.05);
+      border-radius: 40px;
+      padding: 20px;
+      z-index: 2;
+    }
+    .preview-card {
+      border-radius: 20px;
+      border: 1px solid var(--cyan-dark);
+      background: rgba(0,0,0,0.6);
+      min-height: 400px;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-card__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-color: #1e1814;
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      transition: background-image 0.45s ease;
+    }
+    .social-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(14px, 3vw, 22px);
+      justify-content: center;
+      margin-top: 24px;
+    }
+    .social-row .social-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 25%, rgba(218, 168, 110, 0.18), rgba(0, 0, 0, 0.45));
+      border: 2px solid rgba(218, 168, 110, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+    .social-row .social-btn:hover {
+      border-color: var(--cyan-mid);
+      box-shadow: 0 0 0 2px rgba(212, 145, 78, 0.2), 0 12px 36px rgba(212, 145, 78, 0.18);
+      color: var(--cyan-mid);
+      background: radial-gradient(circle at 30% 25%, rgba(218, 168, 110, 0.28), rgba(36, 26, 18, 0.88));
+    }
+    .social-btn__icon {
+      width: 20px;
+      height: 20px;
+      display: block;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+    .dual-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .dual-actions button {
+      padding: 16px 32px;
+      border-radius: 99px;
+      border: none;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 16px;
+      font-family: inherit;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1050px) {
+      .s6 .frame {
+        grid-template-columns: 1fr;
+        padding-top: calc(var(--nav-h) / 4);
+      }
+      .s6-left, .s6-right {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        transform: none;
+        width: 100%;
+        max-width: none;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .dual-actions { flex-direction: column; align-items: center; }
+      .carousel-cards { flex-direction: column; }
+      .cards-track { flex-direction: column; width: 100%; }
+    }
+
+    @media (max-width: 760px) {
+      .riotbar__links {
+        display: none;
+      }
+      .riotbar__right { width: auto; padding-right: 16px; }
+    }
+
+    /* —— 弹窗：登录 / 邀请成功 —— */
+    body.modal-open {
+      overflow: hidden;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 520;
+      background: rgba(28, 18, 12, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      box-sizing: border-box;
+    }
+    .modal-backdrop.is-open {
+      display: flex;
+    }
+    .modal {
+      width: min(400px, 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(218, 168, 110, 0.45);
+      background: linear-gradient(180deg, #2f261c 0%, #16120e 100%);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(212, 145, 78, 0.12);
+      padding: 28px 24px 24px;
+      position: relative;
+      color: var(--white);
+      animation: modalIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.94) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal__close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .modal__close:hover { background: rgba(255, 255, 255, 0.16); }
+    .modal__title {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--cyan-mid);
+    }
+    .modal__lead {
+      margin: 0 0 20px;
+      font-size: 14px;
+      line-height: 1.5;
+      opacity: 0.88;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .modal__field {
+      margin-bottom: 14px;
+    }
+    .modal__field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .modal__field input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(218, 168, 110, 0.35);
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+    }
+    .modal__field input:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 2px rgba(212, 145, 78, 0.2);
+    }
+    .js-login-form {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .modal__submit {
+      align-self: center;
+      width: fit-content;
+      margin-top: 8px;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: var(--cyan);
+      color: #1a140e;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: filter 0.2s ease;
+    }
+    .modal__submit:hover { filter: brightness(1.08); }
+    .modal__submit:active { transform: scale(0.99); }
+
+    .modal--success .modal__success-body {
+      margin: 0 0 20px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .modal__share-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .modal__share-btn {
+      width: fit-content;
+      padding: 10px 12px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+      font-family: inherit;
+    }
+    .modal__share-btn:hover {
+      border-color: var(--cyan-mid);
+      background: rgba(212, 145, 78, 0.12);
+    }
+    .modal__copy {
+      align-self: center;
+      width: fit-content;
+      padding: 12px 20px;
+      border-radius: 99px;
+      border: 1px solid var(--cyan);
+      background: transparent;
+      color: var(--cyan-mid);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .modal__copy:hover { background: rgba(212, 145, 78, 0.1); }
+    .modal__done {
+      align-self: center;
+      width: fit-content;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .modal__done:hover { background: rgba(255, 255, 255, 0.16); }
+
+    /* 右下角：回首页 + 手游测试（纵向堆叠） */
+    .fab-stack {
+      position: fixed;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(20px, env(safe-area-inset-bottom));
+      z-index: 480;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      pointer-events: none;
+    }
+    .fab-stack > * {
+      pointer-events: auto;
+    }
+    .fab-home {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6px;
+      box-sizing: border-box;
+      background: linear-gradient(145deg, #45382c 0%, #1f1814 100%);
+      color: var(--cyan-mid);
+      font-size: 9px;
+      font-weight: 800;
+      line-height: 1.15;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border: 2px solid rgba(218, 168, 110, 0.45);
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .fab-home:hover {
+      transform: scale(1.06);
+      border-color: var(--cyan-mid);
+      box-shadow: 0 12px 36px rgba(212, 145, 78, 0.22), 0 0 0 2px rgba(218, 168, 110, 0.25);
+    }
+    .fab-home:active {
+      transform: scale(0.96);
+    }
+    .fab-home__arrow {
+      font-size: 14px;
+      line-height: 1;
+      margin-bottom: 2px;
+      font-weight: 700;
+    }
+    .fab-wr-test {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+      box-sizing: border-box;
+      background: linear-gradient(145deg, #e8b86a 0%, #a86a38 100%);
+      color: #1a140e;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.2;
+      text-decoration: none;
+      text-transform: none;
+      letter-spacing: 0.02em;
+      box-shadow: 0 8px 28px rgba(212, 145, 78, 0.35), 0 0 0 2px rgba(255, 255, 255, 0.12);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .fab-wr-test:hover {
+      transform: scale(1.06);
+      box-shadow: 0 12px 36px rgba(212, 145, 78, 0.45), 0 0 0 2px rgba(255, 255, 255, 0.2);
+    }
+    .fab-wr-test:active {
+      transform: scale(0.96);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 与设计稿一致的单条导航，随滚动置顶 -->
+  <header class="riotbar" aria-label="Primary navigation">
+    <div class="riotbar__inner">
+      <div class="riotbar__left">
+        <div class="riotbar__logo-pill">
+          <div class="riotbar__fist" title="Logo placeholder"></div>
+          <div class="riotbar__caret"></div>
+        </div>
+      </div>
+      <div class="riotbar__center">
+        <div class="riotbar__game-icon-wrap"><div class="riotbar__game-icon" title="Wild Rift placeholder"></div></div>
+        <nav class="riotbar__links" aria-label="Site links">
+          <a href="#">Game Overview</a>
+          <span class="fake-link">News</span>
+          <span class="fake-link">CHAMPIONS</span>
+          <span class="fake-link">FIND YOUR CHAMPION ↗</span>
+          <span class="fake-link">Support ↗</span>
+          <span class="fake-link">SOCIAL ▾</span>
+        </nav>
+      </div>
+      <div class="riotbar__right">
+        <div class="riotbar__globe" title="Language"></div>
+        <button type="button" class="riotbar__signin">Sign In</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="snap-wrap">
+
+    <!-- Screen 1: Hero -->
+    <section id="screen-1" class="screen s1">
+      <div class="frame">
+        <div class="bg-cover ph-hero" aria-hidden="true"></div>
+        <div class="gradient-overlay" aria-hidden="true"></div>
+        <div class="hero-zone">
+          <div class="hero-stack">
+            <div>
+              <h1 class="headline s1-head">Cho'Gath is Hungry</h1>
+              <p class="sub s1-sub" style="margin-top:16px;">Genuinely, concerningly hungry. You should probably help — and earn some rewards while you’re at it.</p>
+            </div>
+            <div class="hero-actions">
+              <button type="button" class="btn-primary js-nav-s2">Start Feeding</button>
+              <button type="button" class="btn-outline js-nav-s3">View My Rewards</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2: Choose feed -->
+    <section id="screen-2" class="screen s2">
+      <div class="frame s2-frame">
+        <div class="bg-cover" style="background:#1e1814;"></div>
+        <div style="position:absolute;inset:0;overflow:hidden;opacity:0.5;">
+          <div style="position:absolute;inset:0;background:url('https://picsum.photos/seed/s2-bg/1600/900') center/cover;"></div>
+        </div>
+        <div class="gradient-overlay gradient-overlay--blur" aria-hidden="true"></div>
+        <div class="s2-stack">
+          <div class="s2-title">
+            <h2 class="headline">Choose what to feed</h2>
+            <p class="sub">Each invitation unlocks more ways to feed Cho’Gath and expand the feast.</p>
+          </div>
+          <div class="s2-center-stage">
+            <div class="s2-char js-s2-circle" aria-live="polite" aria-label="Current feed target preview">
+              <span class="s2-char-inner js-s2-circle-label">Select a tile below</span>
+            </div>
+          </div>
+          <div class="s2-bottom">
+            <div class="carousel-row" id="s2-carousel">
+              <button type="button" class="car-btn js-s2-prev" aria-label="Show previous targets">←</button>
+              <div class="thumbs js-s2-thumbs" role="listbox" aria-label="Map targets (click to select)"></div>
+              <button type="button" class="car-btn js-s2-next" aria-label="Show next targets">→</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:20px;align-items:center;width:100%;">
+              <div class="hero-actions">
+                <button type="button" class="btn-primary js-s2-feed" disabled>Feed Now</button>
+                <button type="button" class="btn-outline js-nav-s3">Get More Feeds</button>
+              </div>
+              <p class="feed-chances js-s2-chances" aria-live="polite">Feeding Chances: <span class="js-s2-chances-num">3</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3: Invite / dual login -->
+    <section id="screen-3" class="screen s3">
+      <div class="frame">
+        <div class="s3-glow"></div>
+        <div class="gradient-overlay gradient-overlay--blur" aria-hidden="true"></div>
+        <div class="s3-col-left">
+          <div>
+            <h2 class="headline">Bring Someone Back to The Feast</h2>
+            <p class="sub" style="margin-top:24px;">Reconnect an old friend from The Rift with a personalised invitation from Cho’Gath. Unlock mystery dishes, watch him evolve into a magnificent void monster, and make the feast even bigger with every friend you bring back.</p>
+          </div>
+          <button type="button" class="btn-primary js-nav-s4">Start Inviting</button>
+        </div>
+        <div class="s3-col-right">
+          <div class="s3-meta-strip" aria-live="polite">
+            <span>Successful invites: <strong class="js-s3-invite-num">0</strong></span>
+            <span class="sub" style="margin:0;font-size:13px;opacity:0.88;">Each reward tier unlocks when that many friends complete your invite (demo: each screen 6 sign-in counts as 1). Feeding on screen 2 does not affect this.</span>
+          </div>
+          <div class="reward-ring js-s3-ring" tabindex="0" role="button" aria-label="Reward tier">
+            <div class="reward-ring__inner" title="Illustration placeholder"></div>
+            <span class="reward-badge js-s3-tier-badge">Locked</span>
+            <div class="reward-caption js-s3-caption">
+              <p class="t1 js-s3-t1">Dual-login bundle</p>
+              <p class="t2 js-s3-t2">2 friends invited</p>
+              <p class="s3-tier-hint js-s3-tier-hint"></p>
+            </div>
+          </div>
+          <div class="invite-dots js-s3-dots" role="tablist" aria-label="Tiers">
+            <button type="button" class="dot active js-s3-dot" role="tab" aria-selected="true" aria-label="Tier 1"><b></b></button>
+            <button type="button" class="dot js-s3-dot" role="tab" aria-selected="false" aria-label="Tier 2"><b></b></button>
+            <button type="button" class="dot js-s3-dot" role="tab" aria-selected="false" aria-label="Tier 3"><b></b></button>
+            <button type="button" class="dot js-s3-dot" role="tab" aria-selected="false" aria-label="Tier 4"><b></b></button>
+            <button type="button" class="dot js-s3-dot" role="tab" aria-selected="false" aria-label="Tier 5"><b></b></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 4: Pick champ cards -->
+    <section id="screen-4" class="screen s4">
+      <div class="frame">
+        <div class="flow-bg-pane is-empty js-s4-ambient-bg" aria-hidden="true" style="background-image:url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Chogath_0.jpg');opacity:0.35;"></div>
+        <div class="gradient-overlay gradient-overlay--blur"></div>
+        <div class="s4-main">
+          <div class="s4-main__header">
+            <h2 class="headline">Pick Your Cho’Gath</h2>
+            <p class="sub s4-main__lede">Each Cho'Gath is uniquely hungry. Pick the one that feels like you.</p>
+          </div>
+          <div class="carousel-cards" id="s4-carousel">
+              <button type="button" class="car-btn js-s4-prev" aria-label="Previous skin">←</button>
+            <div class="cards-track" role="list" aria-label="Cho'Gath skins">
+              <article class="card-portrait is-side js-s4-card" data-index="0" role="listitem" tabindex="0" aria-label="Left skin">
+                <div class="ph-img ph-img--splash">
+                  <img class="ph-splash-img js-s4-img-l" src="" alt="Cho'Gath skin" loading="lazy" width="280" height="373" />
+                  <div class="ph-img__meta">
+                    <strong class="js-s4-title-l">—</strong>
+                    <span class="js-s4-sub-l">—</span>
+                  </div>
+                </div>
+              </article>
+              <article class="card-portrait hero-card is-center js-s4-card" data-index="1" role="listitem" tabindex="0" aria-label="Center skin">
+                <div class="ph-img ph-img--splash">
+                  <img class="ph-splash-img js-s4-img-c" src="" alt="Cho'Gath skin" loading="lazy" width="292" height="385" />
+                  <div class="ph-img__meta">
+                    <strong class="js-s4-title-c">—</strong>
+                    <span class="js-s4-sub-c">—</span>
+                  </div>
+                </div>
+              </article>
+              <article class="card-portrait is-side js-s4-card" data-index="2" role="listitem" tabindex="0" aria-label="Right skin">
+                <div class="ph-img ph-img--splash">
+                  <img class="ph-splash-img js-s4-img-r" src="" alt="Cho'Gath skin" loading="lazy" width="280" height="373" />
+                  <div class="ph-img__meta">
+                    <strong class="js-s4-title-r">—</strong>
+                    <span class="js-s4-sub-r">—</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+            <button type="button" class="car-btn js-s4-next" aria-label="Next skin">→</button>
+          </div>
+          <button type="button" class="btn-primary js-s4-confirm">He’s the One</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 5: Invitation copy carousel -->
+    <section id="screen-5" class="screen s5">
+      <div class="frame">
+        <div class="flow-bg-pane js-flow-bg-s5 js-s5-dynamic-bg is-empty" aria-hidden="true"></div>
+        <div class="gradient-overlay"></div>
+        <div class="s5-main">
+          <h2 class="headline">Choose Your Invitation</h2>
+          <div id="s5-invite-block" class="s5-invite-block">
+            <div class="invite-card js-s5-card" id="s5-card">
+              <h3 class="js-s5-heading">Remember when we said, one more game and meant five?</h3>
+              <p class="sub js-s5-body">Pick the invitation that best matches your style and lure an old friend back to the feast.</p>
+            </div>
+            <div class="pager">
+              <button type="button" class="car-btn js-s5-prev" aria-label="Previous invite">←</button>
+              <span class="js-s5-page" aria-live="polite">1/5</span>
+              <button type="button" class="car-btn js-s5-next" aria-label="Next invite">→</button>
+            </div>
+          </div>
+          <button type="button" class="btn-primary js-nav-s6">Select This Invite</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 6: Message + preview -->
+    <section id="screen-6" class="screen s6">
+      <div class="frame">
+        <div class="flow-bg-pane js-flow-bg-s6 js-s6-dynamic-bg is-empty" aria-hidden="true"></div>
+        <div class="gradient-overlay gradient-overlay--blur"></div>
+        <div class="s6-left">
+          <div>
+            <h2 class="headline">Drop Your Game IDs</h2>
+            <p class="sub" style="margin-top:16px;text-align:left;">You already picked a skin and invite line. Add IDs and create — the invite wording shows in the Wild Rift test sheet, not on this card.</p>
+          </div>
+          <div class="inputs">
+            <input class="field js-s6-id-self" type="text" placeholder="Your game ID" autocomplete="off" aria-label="Your game ID" />
+            <input class="field js-s6-id-friend" type="text" placeholder="Friend's game ID" autocomplete="off" aria-label="Friend's game ID" />
+          </div>
+          <button type="button" class="btn-primary js-s6-create" disabled aria-disabled="true">Create My Invitation</button>
+        </div>
+        <aside class="s6-right" aria-label="Invitation card preview">
+          <div class="preview-card js-s6-final-card" aria-label="Chosen skin splash only">
+            <div class="preview-card__bg js-s6-card-bg" aria-hidden="true"></div>
+          </div>
+          <div class="social-row">
+            <button type="button" class="social-btn js-s6-share" data-share="x" aria-label="Share on X (opens post composer)">
+              <svg class="social-btn__icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </button>
+            <button type="button" class="social-btn js-s6-share" data-share="facebook" aria-label="Share on Facebook">
+              <svg class="social-btn__icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M24 12.073C24 5.446 18.627.073 12 .073S0 5.446 0 12.073c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.431c0-3.008 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.954H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.063 24 12.073z"/></svg>
+            </button>
+            <button type="button" class="social-btn js-s6-share" data-share="instagram" aria-label="Copy link for Instagram">
+              <svg class="social-btn__icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.172.056 1.805.249 2.227.413.56.216.96.478 1.382.9.421.421.683.821.9 1.382.164.422.357 1.054.413 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.056 1.172-.249 1.805-.413 2.227-.216.56-.478.96-.9 1.382-.421.421-.821.683-1.382.9-.422.164-1.054.357-2.227.413-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.172-.056-1.805-.249-2.227-.413-.56-.216-.96-.478-1.382-.9-.421-.421-.683-.821-.9-1.382-.164-.422-.357-1.054-.413-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.056-1.172.249-1.805.413-2.227.216-.56.478-.96.9-1.382.421-.421.821-.683 1.382-.9.422-.164 1.054-.357 2.227-.413 1.266-.058 1.646-.07 4.85-.07zM12 0C8.741 0 8.333.014 7.054.072 5.776.13 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384C.347 2.681-.064 3.35-.63 4.14c-.297.765-.5 1.636-.558 2.914C.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.058 1.278.261 2.148.558 2.914.306.788.717 1.458 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.914.558 1.28.058 1.687.072 4.948.072s3.668-.014 4.948-.072c1.278-.058 2.148-.261 2.914-.558.788-.306 1.458-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.914.058-1.28.072-1.687.072-4.948s-.014-3.667-.072-4.947c-.058-1.278-.261-2.149-.558-2.914-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.5-2.914-.558C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </button>
+            <button type="button" class="social-btn js-s6-share" data-share="tiktok" aria-label="Share via TikTok or copy link">
+              <svg class="social-btn__icon social-btn__icon--tiktok" viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"/></svg>
+            </button>
+          </div>
+          <div class="dual-actions">
+            <button type="button" class="js-s6-download-card">Download Card</button>
+            <button type="button" class="js-s6-copy-link-footer">Copy Link</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toast-stack js-toast-stack" aria-live="polite" aria-relevant="additions"></div>
+
+  <div class="modal-backdrop js-login-backdrop" aria-hidden="true" role="presentation">
+    <div class="modal modal--login" role="dialog" aria-modal="true" aria-labelledby="modal-login-title">
+      <button type="button" class="modal__close js-login-dismiss" aria-label="Close">&times;</button>
+      <h2 class="modal__title" id="modal-login-title">Sign in</h2>
+      <p class="modal__lead">Enter any username and password to continue (client-side demo only — nothing is sent to a server).</p>
+      <form class="js-login-form" autocomplete="on">
+        <div class="modal__field">
+          <label for="login-username">Username</label>
+          <input id="login-username" name="username" type="text" autocomplete="username" placeholder="Test username" required />
+        </div>
+        <div class="modal__field">
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Test password" required />
+        </div>
+        <button type="submit" class="modal__submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop js-success-backdrop" aria-hidden="true" role="presentation">
+    <div class="modal modal--success" role="dialog" aria-modal="true" aria-labelledby="modal-success-title">
+      <button type="button" class="modal__close js-success-dismiss" aria-label="Close">&times;</button>
+      <h2 class="modal__title" id="modal-success-title">Invitation sent</h2>
+      <p class="modal__success-body js-success-message"></p>
+      <p class="modal__lead" style="margin-bottom:12px;">Share to social platforms or send the link:</p>
+      <div class="modal__share-row">
+        <button type="button" class="modal__share-btn js-success-share-demo">WeChat / QQ</button>
+        <button type="button" class="modal__share-btn js-success-share-demo">Weibo</button>
+        <button type="button" class="modal__share-btn js-success-share-demo">More</button>
+      </div>
+      <button type="button" class="modal__copy js-success-copy-link">Copy invite link</button>
+      <button type="button" class="modal__done js-success-done">Done</button>
+    </div>
+  </div>
+
+  <div class="fab-stack" aria-label="Quick actions">
+    <button type="button" class="fab-home js-fab-home" title="Back to first screen" aria-label="Back to first screen">
+      <span class="fab-home__arrow" aria-hidden="true">↑</span>
+      Home
+    </button>
+    <a href="wild-rift-invite-test.html" class="fab-wr-test" target="_blank" rel="noopener noreferrer" title="Open the Wild Rift-style invite preview (mobile simulation)">LoL<br />WR<br />test</a>
+  </div>
+
+  <script>
+(function () {
+  function qs(sel, root) { return (root || document).querySelector(sel); }
+  function qsa(sel, root) { return [].slice.call((root || document).querySelectorAll(sel)); }
+
+  var reduceMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var snapWrap = qs('.snap-wrap');
+  function allowInnerHorizontalScroll(target) {
+    if (!target || !target.closest) return false;
+    return !!(
+      target.closest('.thumbs') ||
+      target.closest('.cards-track') ||
+      target.closest('.carousel-cards')
+    );
+  }
+  if (snapWrap) {
+    snapWrap.addEventListener(
+      'wheel',
+      function (e) {
+        e.preventDefault();
+      },
+      { passive: false }
+    );
+    snapWrap.addEventListener(
+      'touchmove',
+      function (e) {
+        if (allowInnerHorizontalScroll(e.target)) return;
+        e.preventDefault();
+      },
+      { passive: false }
+    );
+  }
+
+  function pushToast(title, body, durationMs) {
+    var stack = qs('.js-toast-stack');
+    if (!stack) return;
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.setAttribute('role', 'status');
+    var strong = document.createElement('strong');
+    strong.textContent = title;
+    el.appendChild(strong);
+    if (body) {
+      var span = document.createElement('span');
+      span.style.display = 'block';
+      span.style.marginTop = '6px';
+      span.style.fontSize = '14px';
+      span.style.opacity = '0.92';
+      span.style.fontWeight = '500';
+      span.textContent = body;
+      el.appendChild(span);
+    }
+    stack.appendChild(el);
+    var ms = durationMs !== undefined ? durationMs : 3400;
+    setTimeout(function () {
+      el.classList.add('toast--out');
+      setTimeout(function () {
+        try { stack.removeChild(el); } catch (e) {}
+      }, 340);
+    }, ms);
+  }
+
+  /** 跨屏流程：第四屏选定皮肤 → 第五/六屏背景；第五屏文案 → 第六屏合成卡 */
+  var flowState = {
+    skinSplashUrl: '',
+    inviteTitle: '',
+    inviteBody: '',
+  };
+
+  function goToScreen(num) {
+    var el = document.getElementById('screen-' + num);
+    if (!el) return;
+    el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    if (num === 6) syncS6CreateButton();
+    if (num === 3) syncS3RewardUI();
+  }
+
+  function flowBgStack(url) {
+    return 'linear-gradient(180deg, rgba(36,28,22,0.82) 0%, rgba(36,28,22,0.5) 42%, rgba(28,22,18,0.92) 100%), url(' + url + ')';
+  }
+
+  function flowBgCard(url) {
+    return 'linear-gradient(180deg, rgba(26,20,16,0.22) 0%, rgba(24,18,14,0.84) 52%, rgba(18,14,11,0.96) 100%), url(' + url + ')';
+  }
+
+  function applyFlowBackgrounds() {
+    var u = flowState.skinSplashUrl;
+    qsa('.js-flow-bg-s5, .js-flow-bg-s6').forEach(function (pane) {
+      if (!pane) return;
+      if (u) {
+        pane.classList.remove('is-empty');
+        pane.style.opacity = '0.52';
+        pane.style.backgroundImage = flowBgStack(u);
+      } else {
+        pane.classList.add('is-empty');
+        pane.style.opacity = '';
+        pane.style.backgroundImage = '';
+      }
+    });
+  }
+
+  function syncS6PreviewCard() {
+    var bg = qs('.js-s6-card-bg');
+    if (bg && flowState.skinSplashUrl) {
+      bg.style.backgroundImage = flowBgCard(flowState.skinSplashUrl);
+    }
+  }
+
+  /** 第二屏：喂食剩余次数 + 累计喂食（仅用于放大动效）。第三屏：仅按成功邀请人数解锁档位，互不消耗。 */
+  var S2_K_CHANCES = 'wr_feed_chances';
+  var S2_K_FED = 'wr_feed_count';
+  var S3_K_INVITES = 'wr_successful_invites';
+  var LEGACY_K_DRAWS = 'wr_draw_chances';
+  var s2Chances = 3;
+  var s2FedCount = 0;
+  var s3Invites = 0;
+
+  function loadFeedEconomy() {
+    try {
+      var rawC = sessionStorage.getItem(S2_K_CHANCES);
+      if (rawC === null || rawC === '') {
+        var leg = sessionStorage.getItem(LEGACY_K_DRAWS);
+        if (leg !== null && leg !== '') {
+          var pv = parseInt(leg, 10);
+          s2Chances = isNaN(pv) ? 3 : Math.max(0, pv);
+        } else {
+          s2Chances = 3;
+        }
+      } else {
+        var pc = parseInt(rawC, 10);
+        s2Chances = isNaN(pc) ? 3 : Math.max(0, pc);
+      }
+      var fc = parseInt(sessionStorage.getItem(S2_K_FED), 10);
+      s2FedCount = isNaN(fc) ? 0 : Math.max(0, fc);
+    } catch (e) {
+      s2Chances = 3;
+      s2FedCount = 0;
+    }
+  }
+
+  function loadInviteTiers() {
+    try {
+      var inv = parseInt(sessionStorage.getItem(S3_K_INVITES), 10);
+      s3Invites = isNaN(inv) ? 0 : Math.max(0, inv);
+    } catch (e2) {
+      s3Invites = 0;
+    }
+  }
+
+  function persistFeedEconomy() {
+    try {
+      sessionStorage.setItem(S2_K_CHANCES, String(s2Chances));
+      sessionStorage.setItem(S2_K_FED, String(s2FedCount));
+    } catch (err) {}
+  }
+
+  function persistInviteTiers() {
+    try {
+      sessionStorage.setItem(S3_K_INVITES, String(s3Invites));
+    } catch (err2) {}
+  }
+
+  loadFeedEconomy();
+  loadInviteTiers();
+
+  /** Screen 2 · 方形文字：箭头=滚动查看更多，点击方块=选中；Feed Now=扣次数 + 圆放大 + Toast */
+  var S2_FEEDS = [
+    'Red Buff',
+    'Blue Buff',
+    'Jungle Camp',
+    'Scuttle Crab',
+    'Ocean Drake',
+    'Baron Nashor',
+    'Honeyfruit',
+    'Gromp',
+    'Krugs',
+    'Raptors',
+  ];
+  var S2_VISIBLE = 6;
+  var s2Offset = 0;
+  var s2Selected = null;
+  var S2_FEED_TOAST_ROT = [
+    { title: 'Feeding…', body: 'Cho’Gath absorbs the energy — he’s growing bigger.' },
+    { title: 'Still feeding', body: 'The Void visitor is pleased. Size increasing!' },
+    { title: 'Feeding Cho’Gath', body: 'Satiation up — he’s swelling with power…' },
+  ];
+  var s2ToastIx = 0;
+
+  function s2GrowScale() {
+    return Math.min(1.28, 1 + s2FedCount * 0.065);
+  }
+
+  function refreshS2ChancesDOM() {
+    var n = qs('.js-s2-chances-num');
+    if (n) n.textContent = String(s2Chances);
+    var feedBtn = qs('.js-s2-feed');
+    if (feedBtn) {
+      feedBtn.disabled = s2Chances <= 0 || s2Selected == null;
+    }
+    var cir = qs('.js-s2-circle');
+    if (cir) {
+      cir.style.setProperty('--s2-grow', String(s2GrowScale()));
+    }
+  }
+
+  function updateS2Preview() {
+    var inner = qs('.js-s2-circle-label');
+    var cir = qs('.js-s2-circle');
+    if (!inner || !cir) return;
+    if (s2Selected == null) {
+      inner.textContent = 'Select a tile below';
+      cir.removeAttribute('data-feed');
+      return;
+    }
+    var label = S2_FEEDS[s2Selected];
+    inner.textContent = label;
+    cir.setAttribute('data-feed', label);
+  }
+
+  function ensureS2SelectionVisible() {
+    if (s2Selected == null) return;
+    var maxOff = Math.max(0, S2_FEEDS.length - S2_VISIBLE);
+    if (s2Selected < s2Offset) {
+      s2Offset = s2Selected;
+    } else if (s2Selected >= s2Offset + S2_VISIBLE) {
+      s2Offset = Math.min(maxOff, s2Selected - S2_VISIBLE + 1);
+    }
+    if (s2Offset > maxOff) s2Offset = maxOff;
+    if (s2Offset < 0) s2Offset = 0;
+  }
+
+  function selectS2(globalIndex) {
+    s2Selected = globalIndex;
+    ensureS2SelectionVisible();
+    updateS2Preview();
+    renderS2Thumbs();
+    refreshS2ChancesDOM();
+  }
+
+  function renderS2Thumbs() {
+    var wrap = qs('.js-s2-thumbs');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    var maxOff = Math.max(0, S2_FEEDS.length - S2_VISIBLE);
+    var prevBtn = qs('.js-s2-prev');
+    var nextBtn = qs('.js-s2-next');
+    if (prevBtn) {
+      prevBtn.classList.toggle('is-disabled', s2Offset <= 0);
+      prevBtn.setAttribute('aria-disabled', s2Offset <= 0 ? 'true' : 'false');
+    }
+    if (nextBtn) {
+      nextBtn.classList.toggle('is-disabled', s2Offset >= maxOff);
+      nextBtn.setAttribute('aria-disabled', s2Offset >= maxOff ? 'true' : 'false');
+    }
+
+    var end = Math.min(s2Offset + S2_VISIBLE, S2_FEEDS.length);
+    for (var gi = s2Offset; gi < end; gi++) {
+      (function (idx) {
+        var labelText = S2_FEEDS[idx];
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'thumb js-s2-thumb';
+        if (s2Selected === idx) btn.classList.add('is-selected');
+        btn.setAttribute('role', 'option');
+        btn.setAttribute('aria-selected', s2Selected === idx ? 'true' : 'false');
+        btn.setAttribute('aria-label', labelText);
+        btn.dataset.index = String(idx);
+        var tin = document.createElement('span');
+        tin.className = 'thumb-inner';
+        var lab = document.createElement('span');
+        lab.className = 'thumb-label';
+        lab.textContent = labelText;
+        tin.appendChild(lab);
+        btn.appendChild(tin);
+        btn.addEventListener('click', function () {
+          selectS2(idx);
+        });
+        wrap.appendChild(btn);
+      })(gi);
+    }
+  }
+
+  function shiftS2Window(delta) {
+    var maxOff = Math.max(0, S2_FEEDS.length - S2_VISIBLE);
+    s2Offset = Math.max(0, Math.min(maxOff, s2Offset + delta));
+    renderS2Thumbs();
+  }
+
+  qs('.js-s2-prev') && qs('.js-s2-prev').addEventListener('click', function () {
+    shiftS2Window(-1);
+  });
+  qs('.js-s2-next') && qs('.js-s2-next').addEventListener('click', function () {
+    shiftS2Window(1);
+  });
+  qs('.js-s2-feed') && qs('.js-s2-feed').addEventListener('click', function () {
+    if (s2Selected == null) {
+      pushToast('No target selected', 'Tap one of the light tiles below to choose.', 2600);
+      return;
+    }
+    if (s2Chances <= 0) {
+      pushToast('Out of feeds', 'You have no feeding chances left.', 2600);
+      return;
+    }
+    s2Chances -= 1;
+    s2FedCount += 1;
+    persistFeedEconomy();
+    refreshS2ChancesDOM();
+    var t = S2_FEED_TOAST_ROT[s2ToastIx % S2_FEED_TOAST_ROT.length];
+    s2ToastIx += 1;
+    pushToast(t.title, t.body, 3600);
+    var chancesEl = qs('.js-s2-chances');
+    if (chancesEl && !reduceMotion) {
+      chancesEl.classList.add('flash');
+      clearTimeout(chancesEl._tf);
+      chancesEl._tf = setTimeout(function () {
+        chancesEl.classList.remove('flash');
+      }, 280);
+    }
+    var cir = qs('.js-s2-circle');
+    if (cir && !reduceMotion) {
+      var target = s2GrowScale();
+      cir.style.setProperty('--s2-grow', String(Math.min(1.35, target + 0.1)));
+      clearTimeout(cir._growT);
+      cir._growT = setTimeout(function () {
+        cir.style.setProperty('--s2-grow', String(s2GrowScale()));
+      }, 300);
+    }
+  });
+
+  renderS2Thumbs();
+  updateS2Preview();
+  refreshS2ChancesDOM();
+
+  function grantInviteCompletionRewards() {
+    s3Invites += 1;
+    persistInviteTiers();
+    syncS3RewardUI();
+  }
+
+  var s3Dots = qsa('.js-s3-dot');
+  var s3t1 = qs('.js-s3-t1');
+  var s3t2 = qs('.js-s3-t2');
+  var s3tHint = qs('.js-s3-tier-hint');
+  var s3Badge = qs('.js-s3-tier-badge');
+  var s3Data = [
+    { t1: 'Dual-login bundle', t2: 'Invite 2 friends · unlock this tier', need: 2 },
+    { t1: 'Team streak rewards', t2: 'Invite 3 friends · unlock this tier', need: 3 },
+    { t1: 'Weekend raid pack', t2: 'Invite 5 friends · unlock this tier', need: 5 },
+    { t1: 'Legend tier crate', t2: 'Invite 7 friends · unlock this tier', need: 7 },
+    { t1: 'Feast supreme', t2: 'Invite 10 friends · unlock this tier', need: 10 },
+  ];
+
+  function setS3(idx) {
+    var i = Math.max(0, Math.min(idx, s3Dots.length - 1));
+    var inv = s3Invites;
+    s3Dots.forEach(function (dot, di) {
+      dot.classList.toggle('active', di === i);
+      dot.setAttribute('aria-selected', di === i ? 'true' : 'false');
+      var needDi = s3Data[di] ? s3Data[di].need : 999;
+      dot.classList.toggle('is-tier-locked', inv < needDi);
+    });
+    if (s3t1 && s3Data[i]) s3t1.textContent = s3Data[i].t1;
+    if (s3t2 && s3Data[i]) s3t2.textContent = s3Data[i].t2;
+    var unlocked = s3Data[i] ? inv >= s3Data[i].need : false;
+    if (s3Badge) {
+      s3Badge.textContent = unlocked ? 'Unlocked' : 'Locked';
+      s3Badge.style.opacity = unlocked ? '0.9' : '0.55';
+    }
+    if (ring) {
+      ring.classList.toggle('is-tier-locked', !unlocked);
+      ring.setAttribute(
+        'aria-label',
+        unlocked ? 'Reward tier: ' + (s3Data[i] ? s3Data[i].t1 : '') : 'Locked reward tier preview'
+      );
+    }
+    if (s3tHint && s3Data[i]) {
+      var need = s3Data[i].need;
+      var gap = Math.max(0, need - inv);
+      if (unlocked) {
+        s3tHint.textContent =
+          'Unlocked — in a live event you would claim this after the invite count is verified (demo counts screen 6 sign-ins only).';
+      } else {
+        s3tHint.textContent =
+          'Need ' +
+          gap +
+          ' more successful invite' +
+          (gap === 1 ? '' : 's') +
+          ' — go to screen 6 to send another (feeding on screen 2 does not count).';
+      }
+    }
+  }
+
+  function syncS3RewardUI() {
+    var inum = qs('.js-s3-invite-num');
+    if (inum) inum.textContent = String(s3Invites);
+    var cur = 0;
+    if (s3Dots.length) {
+      var fi = s3Dots.findIndex(function (d) {
+        return d.classList.contains('active');
+      });
+      cur = fi >= 0 ? fi : 0;
+    }
+    setS3(cur);
+  }
+
+  s3Dots.forEach(function (dot, i) {
+    dot.addEventListener('click', function () {
+      setS3(i);
+    });
+  });
+  var ring = qs('.js-s3-ring');
+  if (ring) {
+    ring.addEventListener('click', function () {
+      var cur = s3Dots.findIndex(function (d) {
+        return d.classList.contains('active');
+      });
+      setS3((cur + 1) % s3Dots.length);
+    });
+    ring.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        ring.click();
+      }
+    });
+  }
+
+  syncS3RewardUI();
+
+  /** Screen 4 · 三卡轮播（Riot 官方 Cho’Gath splash，Data Dragon） */
+  var CHOGATH_SPLASH = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Chogath_';
+  function chogathSplash(skinIndex) {
+    return CHOGATH_SPLASH + skinIndex + '.jpg';
+  }
+  var s4Slides = [
+    { skin: 0, title: 'Classic Cho’Gath', sub: 'Original splash · Riot Games' },
+    { skin: 1, title: 'Nightmare', sub: 'Splash art · Riot Games' },
+    { skin: 2, title: 'Gentleman', sub: 'Splash art · Riot Games' },
+    { skin: 4, title: 'Jurassic', sub: 'Splash art · Riot Games' },
+    { skin: 5, title: 'Battlecast Prime', sub: 'Splash art · Riot Games' },
+    { skin: 6, title: 'Prehistoric', sub: 'Splash art · Riot Games' },
+  ];
+  var s4c = 1;
+  var track = qs('.cards-track');
+
+  function renderS4() {
+    var n = s4Slides.length;
+    var L = (s4c - 1 + n) % n;
+    var R = (s4c + 1) % n;
+    var imgL = qs('.js-s4-img-l');
+    var imgC = qs('.js-s4-img-c');
+    var imgR = qs('.js-s4-img-r');
+    if (imgL) imgL.src = chogathSplash(s4Slides[L].skin);
+    if (imgC) imgC.src = chogathSplash(s4Slides[s4c].skin);
+    if (imgR) imgR.src = chogathSplash(s4Slides[R].skin);
+    var el = {
+      l: { t: qs('.js-s4-title-l'), s: qs('.js-s4-sub-l') },
+      c: { t: qs('.js-s4-title-c'), s: qs('.js-s4-sub-c') },
+      r: { t: qs('.js-s4-title-r'), s: qs('.js-s4-sub-r') },
+    };
+    if (el.l.t) el.l.t.textContent = s4Slides[L].title;
+    if (el.l.s) el.l.s.textContent = s4Slides[L].sub;
+    if (el.c.t) el.c.t.textContent = s4Slides[s4c].title;
+    if (el.c.s) el.c.s.textContent = s4Slides[s4c].sub;
+    if (el.r.t) el.r.t.textContent = s4Slides[R].title;
+    if (el.r.s) el.r.s.textContent = s4Slides[R].sub;
+  }
+
+  function animS4(dir) {
+    if (!track || reduceMotion) return;
+    track.classList.remove('s4-flip-prev', 's4-flip-next');
+    void track.offsetWidth;
+    track.classList.add(dir === 'prev' ? 's4-flip-prev' : 's4-flip-next');
+    clearTimeout(track._animT);
+    track._animT = setTimeout(function () {
+      track.classList.remove('s4-flip-prev', 's4-flip-next');
+    }, 450);
+  }
+
+  function stepS4(delta) {
+    var n = s4Slides.length;
+    s4c = (s4c + delta + n) % n;
+    renderS4();
+    animS4(delta < 0 ? 'prev' : 'next');
+  }
+
+  qs('.js-s4-prev') && qs('.js-s4-prev').addEventListener('click', function () { stepS4(-1); });
+  qs('.js-s4-next') && qs('.js-s4-next').addEventListener('click', function () { stepS4(1); });
+
+  var s4Cards = qsa('.js-s4-card');
+  s4Cards.forEach(function (card, slot) {
+    card.addEventListener('click', function () {
+      if (slot === 0) stepS4(-1);
+      else if (slot === 2) stepS4(1);
+    });
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.click();
+      }
+    });
+  });
+  renderS4();
+
+  /** Screen 5 · 邀请卡文案（选中的会印在第六屏合成卡上） */
+  var s5Data = [
+    {
+      h: 'You’re officially invited back to the feast.',
+      b: 'We’re summoning old duos: one more game, one more throw, one more night on the Rift. Say yes and make Cho’Gath’s table a little louder.',
+    },
+    {
+      h: 'Remember when “one more game” meant five?',
+      b: 'This is that energy in card form. Forward it to the friend who disappeared after “last lobby” — no judgment, only snacks.',
+    },
+    {
+      h: 'Miss your lane partner?',
+      b: 'Consider this your tasteful poke: the void has room for two dinners, and the feast only gets louder when you reconnect.',
+    },
+    {
+      h: 'Cordially: you’ve been summoned.',
+      b: 'Black tie optional. Feeding Cho’Gath mandatory. RSVP by queuing — we saved you a splash art moment and an invite line.',
+    },
+    {
+      h: 'The Rift misses you both.',
+      b: 'Tell them Cho’Gath held a plate. Seal it with nostalgia, bad calls, and a promise to mute nobody this time.',
+    },
+    {
+      h: 'A formal invite from the banquet.',
+      b: 'Dress code: comfortable. Agenda: nostalgia, pings, one clutch Baron. Copy that onto your card — it’s theirs to keep.',
+    },
+  ];
+  var s5i = 0;
+  var s5Card = qs('.js-s5-card');
+
+  function renderS5(withMotion) {
+    var h = qs('.js-s5-heading');
+    var b = qs('.js-s5-body');
+    var p = qs('.js-s5-page');
+    if (h) h.textContent = s5Data[s5i].h;
+    if (b) b.textContent = s5Data[s5i].b;
+    if (p) p.textContent = (s5i + 1) + '/' + s5Data.length;
+    if (s5Card && !reduceMotion && withMotion) {
+      s5Card.classList.remove('s5-slide-enter');
+      void s5Card.offsetWidth;
+      s5Card.classList.add('s5-slide-enter');
+    }
+  }
+
+  qs('.js-s5-prev') && qs('.js-s5-prev').addEventListener('click', function () {
+    s5i = (s5i - 1 + s5Data.length) % s5Data.length;
+    renderS5(true);
+  });
+  qs('.js-s5-next') && qs('.js-s5-next').addEventListener('click', function () {
+    s5i = (s5i + 1) % s5Data.length;
+    renderS5(true);
+  });
+  renderS5(false);
+
+  /** 第六屏：创建邀请 → 登录弹窗 → 成功弹窗（含分享 / 复制链接）；sessionStorage 供手游测试页读取 */
+  var loginBackdrop = qs('.js-login-backdrop');
+  var successBackdrop = qs('.js-success-backdrop');
+  var inviteLinkForCopy = '';
+
+  function buildInviteDemoLink() {
+    var invEl = qs('.js-s6-id-self');
+    var friendEl = qs('.js-s6-id-friend');
+    var inviterGameId = (invEl && invEl.value.trim()) || 'guest';
+    var friendGameId = friendEl && friendEl.value.trim();
+    var base = window.location.href.replace(/#.*$/, '').split('?')[0];
+    var link = base + '?invite=demo&inviter=' + encodeURIComponent(inviterGameId);
+    if (friendGameId) link += '&friend=' + encodeURIComponent(friendGameId);
+    return link;
+  }
+
+  function persistInviteLink(link) {
+    inviteLinkForCopy = link;
+    try {
+      sessionStorage.setItem('wr_invite_link', link);
+    } catch (e) {}
+  }
+
+  function clipboardWrite(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return Promise.reject(new Error('no clipboard'));
+  }
+
+  function roundedRectPath(ctx, x, y, w, h, rad) {
+    var r = Math.min(rad, w / 2, h / 2);
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function downloadS6CardImage() {
+    var splashUrl = flowState.skinSplashUrl;
+    if (!splashUrl) {
+      pushToast('Missing art', 'Pick a Cho’Gath skin earlier in the flow.', 3200);
+      return;
+    }
+    var W = 920;
+    var H = 1140;
+    var rad = 28;
+    var canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    var ctx = canvas.getContext('2d');
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function () {
+      ctx.save();
+      ctx.fillStyle = '#1e1814';
+      ctx.fillRect(0, 0, W, H);
+      ctx.beginPath();
+      roundedRectPath(ctx, 4, 4, W - 8, H - 8, rad);
+      ctx.clip();
+      var iw = img.naturalWidth || img.width || 1;
+      var ih = img.naturalHeight || img.height || 1;
+      var scale = Math.max(W / iw, H / ih);
+      var dw = iw * scale;
+      var dh = ih * scale;
+      var dx = (W - dw) / 2;
+      var dy = (H - dh) / 2;
+      ctx.drawImage(img, dx, dy, dw, dh);
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(218, 168, 110, 0.65)';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      roundedRectPath(ctx, 4, 4, W - 8, H - 8, rad);
+      ctx.stroke();
+      canvas.toBlob(
+        function (blob) {
+          if (!blob) {
+            pushToast('Export failed', 'Could not build the PNG.', 3200);
+            return;
+          }
+          var a = document.createElement('a');
+          var u = URL.createObjectURL(blob);
+          a.href = u;
+          a.download = 'chogath-feast-card.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(u);
+          pushToast('Saved', 'Card PNG downloaded.', 2600);
+        },
+        'image/png',
+        0.94
+      );
+    };
+    img.onerror = function () {
+      pushToast(
+        'Fallback',
+        'Could not bundle the splash locally. Opening Riot splash in a new tab — save the image manually.',
+        4500
+      );
+      window.open(splashUrl, '_blank', 'noopener,noreferrer');
+    };
+    img.src = splashUrl;
+  }
+
+  function triggerS6Share(platform) {
+    var url = buildInviteDemoLink();
+    var title = flowState.inviteTitle || 'Cho’Gath Feast';
+    var body = (flowState.inviteBody || '').trim();
+    var text =
+      body && body.length > 0
+        ? title + '\n\n' + body.slice(0, 220) + (body.length > 220 ? '…' : '')
+        : title;
+
+    function afterCopy(which) {
+      persistInviteLink(url);
+      if (which === 'instagram') {
+        pushToast('Copied', 'Invite link copied — paste in Instagram Stories, DM, or profile.', 3600);
+      } else if (which === 'tiktok') {
+        pushToast('Copied', 'Invite link copied — paste in TikTok (caption or DM).', 3600);
+      }
+    }
+
+    if (
+      platform === 'instagram' &&
+      navigator.share
+    ) {
+      navigator.share({ title: title, text: text, url: url }).catch(function () {
+        clipboardWrite(url).then(
+          function () {
+            afterCopy('instagram');
+          },
+          function () {
+            pushToast('Copy manually', url, 8000);
+          }
+        );
+      });
+      return;
+    }
+
+    if (platform === 'tiktok' && navigator.share) {
+      navigator.share({ title: title, text: text, url: url }).catch(function () {
+        clipboardWrite(url).then(
+          function () {
+            afterCopy('tiktok');
+          },
+          function () {
+            pushToast('Copy manually', url, 8000);
+          }
+        );
+      });
+      return;
+    }
+
+    if (platform === 'x') {
+      var intent =
+        'https://twitter.com/intent/tweet?text=' +
+        encodeURIComponent(text + '\n\n') +
+        '&url=' +
+        encodeURIComponent(url);
+      window.open(intent, '_blank', 'noopener,noreferrer,width=620,height=420');
+      return;
+    }
+
+    if (platform === 'facebook') {
+      window.open(
+        'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url),
+        '_blank',
+        'noopener,noreferrer,width=640,height=520'
+      );
+      return;
+    }
+
+    clipboardWrite(url).then(
+      function () {
+        afterCopy(platform);
+      },
+      function () {
+        pushToast('Copy this link', url, 8500);
+      }
+    );
+  }
+
+  function updateModalBodyLock() {
+    document.body.classList.toggle('modal-open', qsa('.modal-backdrop.is-open').length > 0);
+  }
+
+  function openBackdrop(el) {
+    if (!el) return;
+    el.classList.add('is-open');
+    el.setAttribute('aria-hidden', 'false');
+    updateModalBodyLock();
+  }
+
+  function closeBackdrop(el) {
+    if (!el) return;
+    el.classList.remove('is-open');
+    el.setAttribute('aria-hidden', 'true');
+    updateModalBodyLock();
+  }
+
+  if (loginBackdrop) {
+    loginBackdrop.addEventListener('click', function (e) {
+      if (e.target === loginBackdrop) closeBackdrop(loginBackdrop);
+    });
+  }
+  if (successBackdrop) {
+    successBackdrop.addEventListener('click', function (e) {
+      if (e.target === successBackdrop) closeBackdrop(successBackdrop);
+    });
+  }
+
+  qs('.js-login-dismiss') && qs('.js-login-dismiss').addEventListener('click', function () {
+    closeBackdrop(loginBackdrop);
+  });
+  qs('.js-success-dismiss') && qs('.js-success-dismiss').addEventListener('click', function () {
+    closeBackdrop(successBackdrop);
+  });
+  qs('.js-success-done') && qs('.js-success-done').addEventListener('click', function () {
+    closeBackdrop(successBackdrop);
+  });
+
+  qs('.js-login-form') && qs('.js-login-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var form = e.target;
+    var loginUser = (form.username && form.username.value.trim()) || 'tester';
+    var inviterGameId = (qs('.js-s6-id-self') && qs('.js-s6-id-self').value.trim()) || '(empty)';
+    var friendGameId = (qs('.js-s6-id-friend') && qs('.js-s6-id-friend').value.trim()) || '(empty)';
+    try {
+      sessionStorage.setItem('wr_invite_self_id', inviterGameId);
+      sessionStorage.setItem('wr_invite_friend_id', friendGameId);
+      sessionStorage.setItem('wr_invite_login_user', loginUser);
+      sessionStorage.setItem(
+        'wr_invite_card_title',
+        flowState.inviteTitle || 'Invitation'
+      );
+      sessionStorage.setItem(
+        'wr_invite_card_body',
+        flowState.inviteBody || ''
+      );
+    } catch (err) {}
+
+    inviteLinkForCopy = buildInviteDemoLink();
+    try {
+      sessionStorage.setItem('wr_invite_link', inviteLinkForCopy);
+    } catch (err2) {}
+
+    var msgEl = qs('.js-success-message');
+    if (msgEl) {
+      msgEl.textContent =
+        'Your invite is on the way to «' +
+        friendGameId +
+        '». Your game ID: ' +
+        inviterGameId +
+        '. In League of Legends: Wild Rift they’ll see your feast invite in the simulated client (this page is a demo). Open “LoL WR test” to preview the in-game-style dialog with your chosen copy.';
+    }
+
+    grantInviteCompletionRewards();
+
+    closeBackdrop(loginBackdrop);
+    openBackdrop(successBackdrop);
+  });
+
+  function syncS6CreateButton() {
+    var selfIn = qs('.js-s6-id-self');
+    var friendIn = qs('.js-s6-id-friend');
+    var btn = qs('.js-s6-create');
+    if (!btn) return;
+    var filled =
+      !!(selfIn && friendIn && selfIn.value.trim() && friendIn.value.trim());
+    btn.disabled = !filled;
+    btn.setAttribute('aria-disabled', filled ? 'false' : 'true');
+  }
+
+  qsa('.js-s6-id-self, .js-s6-id-friend').forEach(function (inp) {
+    inp.addEventListener('input', syncS6CreateButton);
+    inp.addEventListener('change', syncS6CreateButton);
+  });
+
+  qs('.js-s6-create') &&
+    qs('.js-s6-create').addEventListener('click', function () {
+      openBackdrop(loginBackdrop);
+    });
+
+  syncS6CreateButton();
+
+  qs('.js-success-copy-link') &&
+    qs('.js-success-copy-link').addEventListener('click', function () {
+      var link = inviteLinkForCopy || buildInviteDemoLink();
+      clipboardWrite(link).then(
+        function () {
+          persistInviteLink(link);
+          pushToast('Copied', 'Invite link copied to clipboard.', 2200);
+        },
+        function () {
+          pushToast('Invite link', link, 6000);
+        }
+      );
+    });
+
+  qsa('.js-s6-share').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      triggerS6Share(btn.getAttribute('data-share') || '');
+    });
+  });
+
+  qs('.js-s6-download-card') &&
+    qs('.js-s6-download-card').addEventListener('click', function () {
+      downloadS6CardImage();
+    });
+
+  qs('.js-s6-copy-link-footer') &&
+    qs('.js-s6-copy-link-footer').addEventListener('click', function () {
+      var link = buildInviteDemoLink();
+      clipboardWrite(link).then(
+        function () {
+          persistInviteLink(link);
+          pushToast('Copied', 'Invite link copied to clipboard.', 2200);
+        },
+        function () {
+          pushToast('Invite link', link, 6000);
+        }
+      );
+    });
+
+  qsa('.js-success-share-demo').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      pushToast('Demo', 'A real build would open each app’s share sheet — this is UI-only.', 2400);
+    });
+  });
+
+  /** CTA → 跳转各屏（scroll-snap 容器内） */
+  qs('.js-fab-home') &&
+    qs('.js-fab-home').addEventListener('click', function () {
+      goToScreen(1);
+    });
+  qs('.js-nav-s2') && qs('.js-nav-s2').addEventListener('click', function () { goToScreen(2); });
+  qsa('.js-nav-s3').forEach(function (btn) {
+    btn.addEventListener('click', function () { goToScreen(3); });
+  });
+  qs('.js-nav-s4') && qs('.js-nav-s4').addEventListener('click', function () { goToScreen(4); });
+  qs('.js-s4-confirm') && qs('.js-s4-confirm').addEventListener('click', function () {
+    var cur = s4Slides[s4c];
+    if (!cur) return;
+    flowState.skinSplashUrl = chogathSplash(cur.skin);
+    applyFlowBackgrounds();
+    goToScreen(5);
+  });
+  qs('.js-nav-s6') && qs('.js-nav-s6').addEventListener('click', function () {
+    flowState.inviteTitle = s5Data[s5i].h;
+    flowState.inviteBody = s5Data[s5i].b;
+    syncS6PreviewCard();
+    applyFlowBackgrounds();
+    goToScreen(6);
+  });
+
+  /** 顶栏假链接：Enter 触发展示用反馈 */
+  qsa('.riotbar__links .fake-link').forEach(function (el) {
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        el.style.opacity = '0.7';
+        setTimeout(function () { el.style.opacity = ''; }, 120);
+      }
+    });
+  });
+})();
+  </script>
+</body>
+</html>

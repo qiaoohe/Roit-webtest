@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Wild Rift · Invite preview (demo)</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: radial-gradient(ellipse 120% 80% at 50% -20%, #5a4030 0%, #2a2018 45%, #100d0a 100%);
+      color: #f2e8dc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: min(24px, 4vw);
+    }
+
+    button {
+      width: fit-content;
+      max-width: 100%;
+      font: inherit;
+    }
+
+    .phone-shell {
+      width: min(420px, 100%);
+      aspect-ratio: 9 / 19.5;
+      max-height: 92vh;
+      border-radius: 36px;
+      padding: 10px;
+      background: linear-gradient(160deg, #4a3a30 0%, #221a14 45%, #120e0a 100%);
+      box-shadow:
+        0 0 0 2px rgba(212, 160, 100, 0.22),
+        0 24px 56px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .phone-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #14100c;
+      position: relative;
+    }
+
+    .status-bar {
+      height: 26px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: rgba(242, 232, 220, 0.55);
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    .game-top {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(212, 160, 100, 0.14);
+      background: linear-gradient(180deg, rgba(58, 44, 34, 0.96) 0%, rgba(28, 22, 16, 0.92) 100%);
+    }
+
+    .game-top__logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: conic-gradient(from 210deg, #e4b068, #a86a42, #6b4a38, #e4b068);
+      box-shadow: 0 0 12px rgba(212, 145, 78, 0.4);
+    }
+
+    .game-top__titles h1 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #f0ca8c;
+    }
+    .game-top__titles p {
+      margin: 2px 0 0;
+      font-size: 10px;
+      opacity: 0.55;
+    }
+
+    .game-scene {
+      flex: 1;
+      position: relative;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 100%, rgba(120, 72, 48, 0.28) 0%, transparent 55%),
+        linear-gradient(180deg, #1e1814 0%, #0c0a08 100%);
+    }
+
+    .game-scene__hint {
+      position: absolute;
+      left: 50%;
+      top: 36%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.6;
+      opacity: 0.42;
+      max-width: 88%;
+    }
+
+    .game-dock {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 8px 14px;
+      background: rgba(0, 0, 0, 0.45);
+      border-top: 1px solid rgba(212, 160, 100, 0.1);
+    }
+
+    .dock-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .invite-layer {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.62);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px 14px 28px;
+      animation: fadeIn 0.35s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .invite-card {
+      width: 100%;
+      max-width: 360px;
+      border-radius: 18px;
+      padding: 20px 18px 16px;
+      background: linear-gradient(165deg, #3a3028 0%, #221a14 60%, #120e0a 100%);
+      border: 1px solid rgba(218, 168, 110, 0.4);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .invite-card__ribbon {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #c9a882;
+      margin-bottom: 8px;
+    }
+
+    .invite-card h2 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: #f0e6c8;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .invite-card__from {
+      font-size: 12px;
+      color: rgba(242, 232, 220, 0.65);
+      margin-bottom: 10px;
+    }
+
+    .invite-card__body {
+      margin: 0 0 14px;
+      font-size: 14px;
+      line-height: 1.62;
+      color: rgba(242, 232, 220, 0.92);
+      max-height: 160px;
+      overflow: auto;
+    }
+
+    .invite-card__meta {
+      font-size: 11px;
+      color: rgba(242, 232, 220, 0.45);
+      margin-bottom: 14px;
+    }
+
+    .invite-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      width: fit-content;
+    }
+
+    .btn--ghost {
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(242, 232, 220, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn--primary {
+      background: linear-gradient(180deg, #e8b86a 0%, #a86a38 100%);
+      color: #1a1408;
+      box-shadow: 0 4px 16px rgba(212, 145, 78, 0.32);
+    }
+
+    .back-link {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      font-size: 13px;
+      color: rgba(242, 232, 220, 0.55);
+      text-decoration: none;
+    }
+    .back-link:hover { color: #f0ca8c; }
+  </style>
+</head>
+<body>
+  <a class="back-link" href="index.html#screen-6">← Back to site</a>
+
+  <div class="phone-shell" aria-label="Simulated mobile client">
+    <div class="phone-inner">
+      <div class="status-bar">
+        <span>9:41</span>
+        <span>LTE · demo</span>
+      </div>
+      <header class="game-top">
+        <div class="game-top__logo" aria-hidden="true"></div>
+        <div class="game-top__titles">
+          <h1>WILD RIFT</h1>
+          <p>Lobby · friend invite (test page)</p>
+        </div>
+      </header>
+      <div class="game-scene">
+        <p class="game-scene__hint">
+          The sheet below is what a friend might see in-client. Copy comes from screen 5 and is stored in sessionStorage when you finish the flow on the main page; otherwise you’ll see default English demo text.
+        </p>
+        <div class="invite-layer" id="invite-layer">
+          <div class="invite-card" role="dialog" aria-labelledby="invite-title">
+            <span class="invite-card__ribbon">Friend invite</span>
+            <h2 id="invite-title">Feast comeback</h2>
+            <p class="invite-card__from" id="invite-from">From summoner: —</p>
+            <p class="invite-card__body" id="invite-body">—</p>
+            <p class="invite-card__meta" id="invite-meta"></p>
+            <div class="invite-actions">
+              <button type="button" class="btn btn--ghost" id="btn-decline">Dismiss</button>
+              <button type="button" class="btn btn--primary" id="btn-accept">Accept</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="game-dock" aria-hidden="true">
+        <div class="dock-icon"></div>
+        <div class="dock-icon"></div>
+        <div class="dock-icon"></div>
+        <div class="dock-icon"></div>
+      </nav>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  function read(key, fallback) {
+    try {
+      var v = sessionStorage.getItem(key);
+      return v !== null && v !== '' ? v : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  var selfId = read('wr_invite_self_id', 'DemoInviter#0001');
+  var friendId = read('wr_invite_friend_id', 'DemoFriend#0002');
+  var loginUser = read('wr_invite_login_user', 'tester');
+  var title = read('wr_invite_card_title', 'Feast comeback');
+  var body = read(
+    'wr_invite_card_body',
+    'Head back to the Rift with me — limited-time feast rewards and one more “one more game.” (default demo copy)'
+  );
+  var link = read('wr_invite_link', '');
+
+  var elTitle = document.getElementById('invite-title');
+  var elFrom = document.getElementById('invite-from');
+  var elBody = document.getElementById('invite-body');
+  var elMeta = document.getElementById('invite-meta');
+
+  if (elTitle) elTitle.textContent = title;
+  if (elFrom) {
+    elFrom.textContent = 'From ' + selfId + ' · signed in as ' + loginUser;
+  }
+  if (elBody) elBody.textContent = body;
+
+  var metaBits = [];
+  metaBits.push('Recipient game ID: ' + friendId);
+  if (link) metaBits.push('Link: ' + link.replace(/^https?:\/\//, ''));
+  if (elMeta) elMeta.textContent = metaBits.join(' · ');
+
+  document.getElementById('btn-decline').addEventListener('click', function () {
+    document.getElementById('invite-layer').style.opacity = '0';
+    document.getElementById('invite-layer').style.pointerEvents = 'none';
+    setTimeout(function () {
+      document.getElementById('invite-layer').style.display = 'none';
+    }, 280);
+  });
+
+  document.getElementById('btn-accept').addEventListener('click', function () {
+    alert('Demo only: invite accepted (no backend).');
+  });
+})();
+  </script>
+</body>
+</html>
