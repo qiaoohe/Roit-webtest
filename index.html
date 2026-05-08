@@ -1860,7 +1860,7 @@
         <div class="s3-col-right">
           <div class="s3-meta-strip" aria-live="polite">
             <span>Successful invites: <strong class="js-s3-invite-num">0</strong></span>
-            <span class="sub" style="margin:0;font-size:13px;opacity:0.88;">Each reward tier unlocks when that many friends complete your invite (demo: each screen 6 sign-in counts as 1). Feeding on screen 2 does not affect this.</span>
+            <span class="sub" style="margin:0;font-size:13px;opacity:0.88;">In this demo, your initial 3 feeding tries on screen 2 represent 3 friends already counted here; later sends on screen 6 add +1 each. Feeding itself does not raise or lower invite count.</span>
           </div>
           <div class="reward-ring js-s3-ring" tabindex="0" role="button" aria-label="Reward tier">
             <div class="reward-ring__inner" title="Illustration placeholder"></div>
@@ -2185,10 +2185,25 @@
 
   function loadInviteTiers() {
     try {
-      var inv = parseInt(sessionStorage.getItem(S3_K_INVITES), 10);
-      s3Invites = isNaN(inv) ? 0 : Math.max(0, inv);
+      var rawInv = sessionStorage.getItem(S3_K_INVITES);
+      if (rawInv === null || rawInv === '') {
+        /** 与第二屏默认「3 次喂养」同一故事线：视为已有 3 位好友计入进度 */
+        s3Invites = 3;
+        persistInviteTiers();
+      } else {
+        var inv = parseInt(rawInv, 10);
+        s3Invites = isNaN(inv) ? 3 : Math.max(0, inv);
+        if (
+          s3Invites === 0 &&
+          s2FedCount === 0 &&
+          s2Chances === 3
+        ) {
+          s3Invites = 3;
+          persistInviteTiers();
+        }
+      }
     } catch (e2) {
-      s3Invites = 0;
+      s3Invites = 3;
     }
   }
 
